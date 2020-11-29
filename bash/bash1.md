@@ -1,7 +1,8 @@
 # Bash
 
 Se realizara los ejercicio se [overthewire](https://overthewire.org/wargames/) capitulo de Bandit
-bandit0
+
+## bandit0
 ```bash
 bandit0@bandit:~$ hostname -I
 192.168.101.80
@@ -22,7 +23,7 @@ bandit0@bandit:~$ which docker
 /usr/bin/docker
 ```
 
-bandit1
+## bandit1
 ```bash
 bandit1@bandit:~$ whoami
 bandit1
@@ -44,7 +45,7 @@ bandit1@bandit:~$ cat $(pwd)/-
 CV1DtqXWVFXTvM2F0k09SHz0YwRINYA9
 ```
 
-bandit2
+## bandit2
 ```bash
 bandit2@bandit:~$ ls
 spaces in this filename
@@ -66,7 +67,7 @@ bandit2@bandit:~$ cat $(pwd)/*
 UmHadQclWmgdLOKQ3YNgjWxGoRMb5luK
 ```
 
-bandit3
+## bandit3
 ```bash
 bandit3@bandit:~$ ls -la inhere/
 total 12
@@ -152,7 +153,7 @@ bandit3@bandit:~$ find . -type f | xargs grep "leaving"
 ./.bash_logout:# when leaving the console clear the screen to increase privacy
 ```
 
-bandit4
+## bandit4
 ```bash
 bandit4@bandit:~$ ls -l inhere/
 total 40
@@ -211,7 +212,7 @@ file.txt: GIF image data 26634 x 27759
 root@pc:~#
 ```
 
-bandit5
+## bandit5
 ```bash
 bandit5@bandit:~$ ls -l inhere/
 total 80
@@ -348,7 +349,7 @@ root@pc:~# cat /etc/passwd | grep "^root"
 root:x:0:0:root:/root:/bin/bash
 ```
 
-bandit6
+## bandit6
 ```bash
 bandit6@bandit:~$ find / -user bandit7 -group bandit6 -size 33c
 find: ‘/root’: Permission denied
@@ -398,8 +399,9 @@ bandit6@bandit:~$ find / -user bandit7 -group bandit6 -size 33c 2>/dev/null | xa
 HKBPTKQnIay4Fw76bEy8PVxKEDQRKTzs
 ```
 
-bandit7
+## bandit7
 ```bash
+# el archivo es bastante grande
 bandit7@bandit:~$ cat data.txt
 binning	WnfnFPqkuhl2nwHBohzn2C4L5W0gwcLq
 abuts	v8PAwDdkGDdp5NsJ7ZFM5A7TJ5MkYDbm
@@ -431,7 +433,6 @@ bandit7@bandit:~$ awk '/millionth/' data.txt
 millionth	cvX2JJa4CFALtqS87jk27qwqGhBM9plV
 
 # ver velocidades del comando
-
 bandit7@bandit:~$ time awk '/millionth/' data.txt
 millionth	cvX2JJa4CFALtqS87jk27qwqGhBM9plV
 
@@ -446,27 +447,26 @@ user	0m0.000s
 sys	0m0.004s
 
 # trabajar con los argumentos del awk
-
 bandit7@bandit:~$ awk '/millionth/' data.txt  | awk '{print $1}'
 millionth
 bandit7@bandit:~$ awk '/millionth/' data.txt  | awk '{print $2}'
 cvX2JJa4CFALtqS87jk27qwqGhBM9plV
 
-bandit7@bandit:~$ awk 'millionth' data.txt
+bandit7@bandit:~$ awk 'millionth' data.txt  # No Funciona
 bandit7@bandit:~$ awk '/millionth/' data.txt
 millionth	cvX2JJa4CFALtqS87jk27qwqGhBM9plV
-bandit7@bandit:~$
 
-bandit7@bandit:~$ grep '/millionth/' data.txt
+bandit7@bandit:~$ grep '/millionth/' data.txt # No Funciona
 bandit7@bandit:~$ grep 'millionth' data.txt
 millionth	cvX2JJa4CFALtqS87jk27qwqGhBM9plV
 
-
-bandit7@bandit:~$ grep '/millionth/' data.txt
+# Argumentos desde la tuberia de un grep y luego de un awk
+# desde grep
 bandit7@bandit:~$ grep 'millionth' data.txt
 millionth	cvX2JJa4CFALtqS87jk27qwqGhBM9plV
 bandit7@bandit:~$ grep 'millionth' data.txt | awk '{print $1}'
 millionth
+# desde awk
 bandit7@bandit:~$ awk 'millionth' data.txt | awk '{print $1}'
 bandit7@bandit:~$ awk '/millionth/' data.txt | awk '{print $1}'
 millionth
@@ -485,11 +485,9 @@ Vlp9MBhGqwq72kj78SqtLAFC4aJJ2Xvc
 bandit7@bandit:~$ awk '/millionth/' data.txt  | rev | awk '{print $1}' | rev
 cvX2JJa4CFALtqS87jk27qwqGhBM9plV
 
-
+# para recordar
 bandit7@bandit:~$ grep 'millionth' data.txt -n
 37262:millionth	cvX2JJa4CFALtqS87jk27qwqGhBM9plV
 bandit7@bandit:~$ awk 'NR==37262' data.txt
 millionth	cvX2JJa4CFALtqS87jk27qwqGhBM9plV
-
-
 ```
