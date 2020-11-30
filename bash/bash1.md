@@ -758,6 +758,7 @@ root@pc:~# mv data data.gzip
 ```
 
 Trabajar con 7z
+
 Listar
 ```bash
 # recomendación - no es necesario utilizar gunzip, tar -xf, bzip2 = hay un monton de tipos de comprimidos
