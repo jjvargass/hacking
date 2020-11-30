@@ -755,6 +755,199 @@ root@pc:~#
 # renombramos acorde a su tipo
 root@pc:~# mv data data.gzip
 
+# recomendación - no es necesario utilizar gunzip, tar -xf, bzip2 = hay un monton de tipos de comprimidos
+# Pero 7z ES UNIVERSAL, permite listar el contenido de un comprimido
+root@pc:~# 7z l data.gzip
+
+7-Zip [64] 16.02 : Copyright (c) 1999-2016 Igor Pavlov : 2016-05-21
+p7zip Version 16.02 (locale=en_US.UTF-8,Utf16=on,HugeFiles=on,64 bits,4 CPUs Intel(R) Core(TM) i7-6500U CPU @ 2.50GHz (406E3),ASM,AES-NI)
+
+Scanning the drive for archives:
+1 file, 606 bytes (1 KiB)
+
+Listing archive: data.gzip
+
+--
+Path = data.gzip
+Type = gzip
+Headers Size = 20
+
+   Date      Time    Attr         Size   Compressed  Name
+------------------- ----- ------------ ------------  ------------------------
+2020-05-07 13:14:30 .....          573          606  data2.bin
+------------------- ----- ------------ ------------  ------------------------
+2020-05-07 13:14:30                573          606  1 files
+root@pc:~#
+
+# para extraer con x
+root@pc:~# 7z x data.gzip
+
+7-Zip [64] 16.02 : Copyright (c) 1999-2016 Igor Pavlov : 2016-05-21
+p7zip Version 16.02 (locale=en_US.UTF-8,Utf16=on,HugeFiles=on,64 bits,4 CPUs Intel(R) Core(TM) i7-6500U CPU @ 2.50GHz (406E3),ASM,AES-NI)
+
+Scanning the drive for archives:
+1 file, 606 bytes (1 KiB)
+
+Extracting archive: data.gzip
+--
+Path = data.gzip
+Type = gzip
+Headers Size = 20
+
+Everything is Ok
+
+Size:       573
+Compressed: 606
+root@pc:~# ls
+data2.bin  data.gzip  data.hex
+
+# ahora tenemos un data2.bin
+
+# revisamos con file
+root@pc:~# file data2.bin
+data2.bin: bzip2 compressed data, block size = 900k
+root@pc:~#
+
+root@pc:~# 7z l data2.bin
+
+7-Zip [64] 16.02 : Copyright (c) 1999-2016 Igor Pavlov : 2016-05-21
+p7zip Version 16.02 (locale=en_US.UTF-8,Utf16=on,HugeFiles=on,64 bits,4 CPUs Intel(R) Core(TM) i7-6500U CPU @ 2.50GHz (406E3),ASM,AES-NI)
+
+Scanning the drive for archives:
+1 file, 573 bytes (1 KiB)
+
+Listing archive: data2.bin
+
+--
+Path = data2.bin
+Type = bzip2
+
+   Date      Time    Attr         Size   Compressed  Name
+------------------- ----- ------------ ------------  ------------------------
+                    .....                            data2
+------------------- ----- ------------ ------------  ------------------------
+                                                573  1 files
+root@pc:~#
+
+# como vemos esto ha sido comrpimido multiple veces
+# vamos a crear un script para realizar esta operción multiples veces
+root@pc:~# touch decompresor.sh
+root@pc:~# chmod +x !$
+chmod +x decompresor.sh
+root@pc:~#
+
+root@pc:~# 7z l data.gzip
+
+7-Zip [64] 16.02 : Copyright (c) 1999-2016 Igor Pavlov : 2016-05-21
+p7zip Version 16.02 (locale=en_US.UTF-8,Utf16=on,HugeFiles=on,64 bits,4 CPUs Intel(R) Core(TM) i7-6500U CPU @ 2.50GHz (406E3),ASM,AES-NI)
+
+Scanning the drive for archives:
+1 file, 606 bytes (1 KiB)
+
+Listing archive: data.gzip
+
+--
+Path = data.gzip
+Type = gzip
+Headers Size = 20
+
+   Date      Time    Attr         Size   Compressed  Name
+------------------- ----- ------------ ------------  ------------------------
+2020-05-07 13:14:30 .....          573          606  data2.bin
+------------------- ----- ------------ ------------  ------------------------
+2020-05-07 13:14:30                573          606  1 files
+
+# lo que nos interesa el la columna del Name
+
+root@pc:~# 7z l data.gzip | grep "Name"
+   Date      Time    Attr         Size   Compressed  Name
+
+# con el parametro -A 2  listeme dos lineas abajo desde el merch que encontrantes
+root@pc:~# 7z l data.gzip | grep "Name" -A 2
+   Date      Time    Attr         Size   Compressed  Name
+------------------- ----- ------------ ------------  ------------------------
+2020-05-07 13:14:30 .....          573          606  data2.bin
+
+# con -B lineas por encima
+root@pc:~# 7z l data.gzip | grep "Name" -B 2
+Headers Size = 20
+
+   Date      Time    Attr         Size   Compressed  Name
+
+# dos por debajo y dos por encima
+root@pc:~# 7z l data.gzip | grep "Name" -C 2
+Headers Size = 20
+
+   Date      Time    Attr         Size   Compressed  Name
+------------------- ----- ------------ ------------  ------------------------
+2020-05-07 13:14:30 .....          573          606  data2.bin
+
+# traemos la ultima linea
+root@pc:~# 7z l data.gzip | grep "Name" -C 2 | tail -n 1
+2020-05-07 13:14:30 .....          573          606  data2.bin
+
+# ultimo argumento de la salida
+root@pc:~# 7z l data.gzip | grep "Name" -C 2 | tail -n 1 | awk 'NF{print $NF}'
+data2.bin
+
+# cambianos nombre del primer archivo comrpimido
+root@pc:~# mv data.gzip content.gzip
+
+
+# crear script
+root@pc:~# cat decompresor.sh
+#!/bin/bash
+
+name_compressed=$(7z l content.gzip | grep "Name" -A 2 | tail -n 1 | awk 'NF{print $NF}')
+
+echo $name_compressed
+
+#---------
+# ahora descomprimimos el archivo y controlamos la salida
+root@pc:~# cat decompresor.sh
+#!/bin/bash
+
+name_compressed=$(7z l content.gzip | grep "Name" -A 2 | tail -n 1 | awk 'NF{print $NF}')
+
+7z x content.gzip
+
+
+root@pc:~#
+
+
+# ejecutamos
+root@pc:~# ./decompresor.sh
+
+7-Zip [64] 16.02 : Copyright (c) 1999-2016 Igor Pavlov : 2016-05-21
+p7zip Version 16.02 (locale=en_US.UTF-8,Utf16=on,HugeFiles=on,64 bits,4 CPUs Intel(R) Core(TM) i7-6500U CPU @ 2.50GHz (406E3),ASM,AES-NI)
+
+Scanning the drive for archives:
+1 file, 606 bytes (1 KiB)
+
+Extracting archive: content.gzip
+--
+Path = content.gzip
+Type = gzip
+Headers Size = 20
+
+Everything is Ok
+
+Size:       573
+Compressed: 606
+root@pc:~#
+
+# pero el stderr stdout no nos intereza mostar en el script
+root@pc:~# cat decompresor.sh
+#!/bin/bash
+
+name_compressed=$(7z l content.gzip | grep "Name" -A 2 | tail -n 1 | awk 'NF{print $NF}')
+
+7z x content.gzip > /dev/null 2>&1
+
+# ejecutamos
+
+root@pc:~# ./decompresor.sh
+root@pc:~#
 
 
 ```
