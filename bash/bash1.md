@@ -1032,10 +1032,7 @@ The password is 8ZjyCRiBWFYkneahHwxCv3wb2a1ORpYL
 root@pc:~#
 ```
 
-
-
-
-
+## bandit13
 ```bash
 
 ```
