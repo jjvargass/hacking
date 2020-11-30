@@ -871,41 +871,52 @@ Headers Size = 20
 2020-05-07 13:14:30 .....          573          606  data2.bin
 ------------------- ----- ------------ ------------  ------------------------
 2020-05-07 13:14:30                573          606  1 files
+```
 
-# lo que nos interesa el la columna del Name
-
+Lo que nos interesa el la columna del Name
+```bash
 root@pc:~# 7z l data.gzip | grep "Name"
    Date      Time    Attr         Size   Compressed  Name
+```
 
-# con el parametro -A 2  listeme dos lineas abajo desde el merch que encontrantes
+Con el parametro -A 2  listeme dos lineas abajo desde el merch que encontrantes
+```bash
 root@pc:~# 7z l data.gzip | grep "Name" -A 2
    Date      Time    Attr         Size   Compressed  Name
 ------------------- ----- ------------ ------------  ------------------------
 2020-05-07 13:14:30 .....          573          606  data2.bin
+```
 
-# con -B lineas por encima
+Con -B lineas por encima
+```bash
 root@pc:~# 7z l data.gzip | grep "Name" -B 2
 Headers Size = 20
 
    Date      Time    Attr         Size   Compressed  Name
+```
 
-# dos por debajo y dos por encima
+Dos por debajo y dos por encima
+```bash
 root@pc:~# 7z l data.gzip | grep "Name" -C 2
 Headers Size = 20
 
    Date      Time    Attr         Size   Compressed  Name
 ------------------- ----- ------------ ------------  ------------------------
 2020-05-07 13:14:30 .....          573          606  data2.bin
+```
 
-# traemos la ultima linea
+Traemos la ultima linea
+```bash
 root@pc:~# 7z l data.gzip | grep "Name" -C 2 | tail -n 1
 2020-05-07 13:14:30 .....          573          606  data2.bin
 
 # ultimo argumento de la salida
 root@pc:~# 7z l data.gzip | grep "Name" -C 2 | tail -n 1 | awk 'NF{print $NF}'
 data2.bin
+```
 
-# cambianos nombre del primer archivo comrpimido
+Cambianos nombre del primer archivo comrpimido
+```bash
 root@pc:~# mv data.gzip content.gzip
 ```
 
