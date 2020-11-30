@@ -491,3 +491,288 @@ bandit7@bandit:~$ grep 'millionth' data.txt -n
 bandit7@bandit:~$ awk 'NR==37262' data.txt
 millionth	cvX2JJa4CFALtqS87jk27qwqGhBM9plV
 ```
+
+bandit8
+```bash
+# conteno de lineas
+bandit8@bandit:~$ cat data.txt | wc -l
+1001
+
+# filtrar cadenas que poso aparecen una unica vez
+
+# enpezar por ordenar
+bandit8@bandit:~$ cat data.txt | sort
+07KC3ukwX7kswl8Le9ebb3H3sOoNTsR2
+07KC3ukwX7kswl8Le9ebb3H3sOoNTsR2
+07KC3ukwX7kswl8Le9ebb3H3sOoNTsR2
+07KC3ukwX7kswl8Le9ebb3H3sOoNTsR2
+07KC3ukwX7kswl8Le9ebb3H3sOoNTsR2
+07KC3ukwX7kswl8Le9ebb3H3sOoNTsR2
+07KC3ukwX7kswl8Le9ebb3H3sOoNTsR2
+07KC3ukwX7kswl8Le9ebb3H3sOoNTsR2
+07KC3ukwX7kswl8Le9ebb3H3sOoNTsR2
+07KC3ukwX7kswl8Le9ebb3H3sOoNTsR2
+0efnqHY1ZTNRu4LsDX4D73DsxIQq7RuJ
+0efnqHY1ZTNRu4LsDX4D73DsxIQq7RuJ
+0efnqHY1ZTNRu4LsDX4D73DsxIQq7RuJ
+0efnqHY1ZTNRu4LsDX4D73DsxIQq7RuJ
+
+# con  uniq -u  para traer la unica, requiere previamente del sort
+bandit8@bandit:~$ cat data.txt | sort | uniq -u
+UsvVyFSfZZWbi6wgC7dAFyFuR6jQQUhR
+
+# tambien se puede utilizar con unique
+```
+
+bandit9
+```bash
+bandit9@bandit:~$ cat data.txt
+�L�lω;��ßOܛ��ǤX��NdT$��x7��@D@�o��+D��B��M֢�Z/,_��w��#�5���
+                                                          Ў�e�&�-��Ϣ�6Q8��J�%fa�
+�np�6l
+|c���WW"&8��f��
+��VJ�$�S~����d�
+               �p�k�U�;ֿ�v�Am��H��tɘ�3�ߘ�(ǟ�E'
+                                             ���'��:��uP�ע��������g�
+!�'�
+    t��!P���
+            p
+
+# el archivo no es legible
+# sting nos permite listar las cadenas de caracteres imprimibles en ficheros
+
+bandit9@bandit:~$ strings data.txt
+Z/,_
+WW"&8
+2Qk)
+xWa_
+x?Xn
+//M$
+;yzEt!
+WpU~e
+
+#
+bandit9@bandit:~$ strings data.txt | grep "====="
+========== the*2i"4
+========== password
+Z)========== is
+&========== truKLdjsbJ5g7yyJ2X2R0o3a5HQJFuLk
+
+
+bandit9@bandit:~$ strings data.txt | grep "=====" | tail -n 1
+&========== truKLdjsbJ5g7yyJ2X2R0o3a5HQJFuLk
+```
+
+Ejercicio de bucle
+```bash
+root@pc:~# touch bucle.sh
+root@pc:~# chmod +x !$
+chmod +x bucle.sh
+root@pc:~#
+
+# El !$ es una forma de referenciar (NO COMANDO)  si no el ultimo argumento del comando previamente ejecutado.
+
+root@pc:~# cat bucle.sh
+#!/bin/bash
+
+cat /etc/passwd | while read line; do
+	echo "Estamos Aquí: $line"
+done
+
+# La forma optimizada del while read line
+root@pc:~# cat bucle.sh
+#!/bin/bash
+
+while read line; do
+	echo "Estamos Aquí: $line"
+done < /etc/passwd
+root@pc:~#
+
+# las variables en la asignación no deben contenere estacion entre el =.
+# Ejemplo var=1
+
+root@pc:~# cat bucle.sh
+#!/bin/bash
+
+contador=1
+
+while read line; do
+	echo "Línea $contador: $line"
+	let contador+=1 # contador = contador +1
+done < /etc/passwd
+root@pc:~#
+
+
+# todo lo realizado en un script se puede hacer en un wile liner
+bandit9@bandit:~$ strings data.txt | grep "====" | while read line; do echo $line; done
+========== the*2i"4
+========== password
+Z)========== is
+&========== truKLdjsbJ5g7yyJ2X2R0o3a5HQJFuLk
+
+bandit9@bandit:~$ strings data.txt | grep "====" | while read line; do echo "Hola: $line"; done
+Hola: ========== the*2i"4
+Hola: ========== password
+Hola: Z)========== is
+Hola: &========== truKLdjsbJ5g7yyJ2X2R0o3a5HQJFuLk
+bandit9@bandit:~$
+
+bandit9@bandit:~$ contador=1; strings data.txt | grep "====" | while read line; do echo "Linea $contador: $line"; let contador+=1; done
+Linea 1: ========== the*2i"4
+Linea 2: ========== password
+Linea 3: Z)========== is
+Linea 4: &========== truKLdjsbJ5g7yyJ2X2R0o3a5HQJFuLk
+
+bandit9@bandit:~$ contador=1; strings data.txt | grep "====" | while read line; do echo "Linea $contador: $line"; let contador+=1; done | awk 'NR==4'
+Linea 4: &========== truKLdjsbJ5g7yyJ2X2R0o3a5HQJFuLk
+bandit9@bandit:~$
+```
+
+bandit10
+```bash
+# la passwor esta encriptada en base64
+
+bandit10@bandit:~$ cat data.txt
+VGhlIHBhc3N3b3JkIGlzIElGdWt3S0dzRlc4TU9xM0lSRnFyeEUxaHhUTkViVVBSCg==
+bandit10@bandit:~$
+
+# Ejemplo para codificar el base64
+root@pc:~# echo "hola que tal" | base64
+aG9sYSBxdWUgdGFsCg==
+root@pc:~#
+
+# decodificar   -d
+root@pc:~# echo "hola que tal" | base64 | base64 -d
+hola que tal
+
+bandit10@bandit:~$ cat data.txt | base64 -d
+The password is IFukwKGsFW8MOq3IRFqrxE1hxTNEbUPR
+bandit10@bandit:~$
+
+# comando tr
+bandit10@bandit:~$ cat data.txt | base64 -d | tr ' ' '\n'
+The
+password
+is
+IFukwKGsFW8MOq3IRFqrxE1hxTNEbUPR
+bandit10@bandit:~$
+
+bandit10@bandit:~$ cat data.txt | base64 -d | sed 's/ /\n/g'
+The
+password
+is
+IFukwKGsFW8MOq3IRFqrxE1hxTNEbUPR
+
+root@pc:~# cat /etc/passwd | head -n 1
+root:x:0:0:root:/root:/bin/bash
+root@pc:~# cat /etc/passwd | head -n 1 | tr 'r' 'o'
+ooot:x:0:0:ooot:/ooot:/bin/bash
+root@pc:~#
+
+# no es que reemplaza palabras Ejmeplo: tr 'root' 'jjvargas'
+# tr reemplazara la r->j  o->j o->v t->a  la o queda con la ultima asignación
+
+root@pc:~# cat /etc/passwd | head -n 1
+root:x:0:0:root:/root:/bin/bash
+root@pc:~# cat /etc/passwd | head -n 1 | tr 'r' 'o'
+ooot:x:0:0:ooot:/ooot:/bin/bash
+root@pc:~# cat /etc/passwd | head -n 1 | tr 'root' 'jjvargass'
+jvva:x:0:0:jvva:/jvva:/bin/bash
+```
+## bandit11
+```bash
+# The password for the next level is stored in the file data.txt,
+# where all lowercase (a-z) and uppercase (A-Z) letters have been rotated by 13 positions
+
+
+bandit11@bandit:~$ cat data.txt
+Gur cnffjbeq vf 5Gr8L4qetPEsPk8htqjhRK8XSP6x2RHh
+bandit11@bandit:~$ cat data.txt  | tr '[G-ZA-Fg-za-f]' '[T-ZA-St-za-s]'
+The password is 5Te8Y4drgCRfCx8ugdwuEX8KFC6k2EUu
+bandit11@bandit:~$
+
+# traer el ultimo parametro
+bandit11@bandit:~$ cat data.txt  | tr '[G-ZA-Fg-za-f]' '[T-ZA-St-za-s]' | awk 'NF{print $NF}'
+5Te8Y4drgCRfCx8ugdwuEX8KFC6k2EUu
+bandit11@bandit:~$
+```
+
+## bandit12
+```bash
+bandit12@bandit:~$ cat data.txt
+00000000: 1f8b 0808 0650 b45e 0203 6461 7461 322e  .....P.^..data2.
+00000010: 6269 6e00 013d 02c2 fd42 5a68 3931 4159  bin..=...BZh91AY
+00000020: 2653 598e 4f1c c800 001e 7fff fbf9 7fda  &SY.O...........
+00000030: 9e7f 4f76 9fcf fe7d 3fff f67d abde 5e9f  ..Ov...}?..}..^.
+00000040: f3fe 9fbf f6f1 feee bfdf a3ff b001 3b1b  ..............;.
+00000050: 5481 a1a0 1ea0 1a34 d0d0 001a 68d3 4683  T......4....h.F.
+00000060: 4680 0680 0034 1918 4c4d 190c 4000 0001  F....4..LM..@...
+00000070: a000 c87a 81a3 464d a8d3 43c5 1068 0346  ...z..FM..C..h.F
+00000080: 8343 40d0 3400 0340 66a6 8068 0cd4 f500  .C@.4..@f..h....
+00000090: 69ea 6800 0f50 68f2 4d00 680d 06ca 0190  i.h..Ph.M.h.....
+000000a0: 0000 69a1 a1a0 1ea0 194d 340d 1ea1 b280  ..i......M4.....
+000000b0: f500 3406 2340 034d 3400 0000 3403 d400  ..4.#@.M4...4...
+000000c0: 1a07 a832 3400 f51a 0003 43d4 0068 0d34  ...24.....C..h.4
+000000d0: 6868 f51a 3d43 2580 3e58 061a 2c89 6bf3  hh..=C%.>X..,.k.
+000000e0: 0163 08ab dc31 91cd 1747 599b e401 0b06  .c...1...GY.....
+000000f0: a8b1 7255 a3b2 9cf9 75cc f106 941b 347a  ..rU....u.....4z
+00000100: d616 55cc 2ef2 9d46 e7d1 3050 b5fb 76eb  ..U....F..0P..v.
+00000110: 01f8 60c1 2201 33f0 0de0 4aa6 ec8c 914f  ..`.".3...J....O
+
+
+# hexadecimal
+root@pc:~# echo "hola que tal" | xxd
+00000000: 686f 6c61 2071 7565 2074 616c 0a         hola que tal.
+
+root@pc:~# echo "hola que tal" | xxd | xxd -r
+hola que tal
+root@pc:~#
+
+# trabajar el fichero data de forma local copiando la salida del cad en un archivo local
+
+root@pc:~# nano data.hex
+
+# primer saber que es
+root@pc:~# xxd -r data.hex
+P�^data2.bin=��BZh91AY&SY�O����ڞOv���}?��}��^���������ߣ��;�����4���h�F�F��4LM
+                                                                             @��z��FM��C�hF�C@�4@f��h
+4hh��=C%�>X�,�k���1��GY��                                                                            ��i�hPh�Mh
+�J�쌑Oϊ��{RBp�Qix�Y�Z!d��j�(�搿ݳ��/��A�#�A�F��0P��v��`�"3�
+
+                                          ��d�bX?��z��2��<��A �n}
+5(3A��
+      wO�R����6�XS{�
+��9?L�P�yB��=z�m?�L�Nt*�7{qP��̜�%"�w9�qm4�� N3�6���K��H䋑[��}!
+
+# redireccionamos a un arhcivo
+root@pc:~# xxd -r data.hex > data
+
+# saber el numero magico
+root@pc:~# file data
+data: gzip compressed data, was "data2.bin", last modified: Thu May  7 18:14:30 2020, max compression, from Unix, original size modulo 2^32 573
+root@pc:~#
+
+# renombramos acorde a su tipo
+root@pc:~# mv data data.gzip
+
+
+
+```
+
+
+```bash
+
+```
+
+```bash
+
+```
+
+
+```bash
+
+```
+
+```bash
+
+```
