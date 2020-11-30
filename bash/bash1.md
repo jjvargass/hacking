@@ -492,7 +492,7 @@ bandit7@bandit:~$ awk 'NR==37262' data.txt
 millionth	cvX2JJa4CFALtqS87jk27qwqGhBM9plV
 ```
 
-bandit8
+## bandit8
 ```bash
 # conteno de lineas
 bandit8@bandit:~$ cat data.txt | wc -l
@@ -524,7 +524,7 @@ UsvVyFSfZZWbi6wgC7dAFyFuR6jQQUhR
 # tambien se puede utilizar con unique
 ```
 
-bandit9
+## bandit9
 ```bash
 bandit9@bandit:~$ cat data.txt
 �L�lω;��ßOܛ��ǤX��NdT$��x7��@D@�o��+D��B��M֢�Z/,_��w��#�5���
@@ -628,7 +628,7 @@ Linea 4: &========== truKLdjsbJ5g7yyJ2X2R0o3a5HQJFuLk
 bandit9@bandit:~$
 ```
 
-bandit10
+## bandit10
 ```bash
 # la passwor esta encriptada en base64
 
@@ -727,9 +727,10 @@ root@pc:~# echo "hola que tal" | xxd
 root@pc:~# echo "hola que tal" | xxd | xxd -r
 hola que tal
 root@pc:~#
+```
 
-# trabajar el fichero data de forma local copiando la salida del cad en un archivo local
-
+Trabajar el fichero data de forma local copiando la salida del cat en un archivo local
+```bash
 root@pc:~# nano data.hex
 
 # primer saber que es
@@ -754,7 +755,11 @@ root@pc:~#
 
 # renombramos acorde a su tipo
 root@pc:~# mv data data.gzip
+```
 
+Trabajar con 7z
+Listar
+```bash
 # recomendación - no es necesario utilizar gunzip, tar -xf, bzip2 = hay un monton de tipos de comprimidos
 # Pero 7z ES UNIVERSAL, permite listar el contenido de un comprimido
 root@pc:~# 7z l data.gzip
@@ -778,8 +783,11 @@ Headers Size = 20
 ------------------- ----- ------------ ------------  ------------------------
 2020-05-07 13:14:30                573          606  1 files
 root@pc:~#
+```
 
-# para extraer con x
+Extraer
+```bash
+# para extraer con el parametro x
 root@pc:~# 7z x data.gzip
 
 7-Zip [64] 16.02 : Copyright (c) 1999-2016 Igor Pavlov : 2016-05-21
@@ -800,10 +808,11 @@ Size:       573
 Compressed: 606
 root@pc:~# ls
 data2.bin  data.gzip  data.hex
+```
 
-# ahora tenemos un data2.bin
-
-# revisamos con file
+La Salida de la Descompresión, da nuevamente un data2.bin que es un bzip2
+```bash
+# revisamos data.bin con file
 root@pc:~# file data2.bin
 data2.bin: bzip2 compressed data, block size = 900k
 root@pc:~#
@@ -828,14 +837,19 @@ Type = bzip2
 ------------------- ----- ------------ ------------  ------------------------
                                                 573  1 files
 root@pc:~#
+```
 
-# como vemos esto ha sido comrpimido multiple veces
+Como vemos esto ha sido comrpimido multiple veces
+```bash
 # vamos a crear un script para realizar esta operción multiples veces
 root@pc:~# touch decompresor.sh
 root@pc:~# chmod +x !$
 chmod +x decompresor.sh
 root@pc:~#
+```
 
+Obtener el nombre del siguietne comprimido
+```bash
 root@pc:~# 7z l data.gzip
 
 7-Zip [64] 16.02 : Copyright (c) 1999-2016 Igor Pavlov : 2016-05-21
@@ -892,8 +906,11 @@ data2.bin
 
 # cambianos nombre del primer archivo comrpimido
 root@pc:~# mv data.gzip content.gzip
+```
 
-
+Iniciamos con el scritp   
+(Paso 1)
+```bash
 # crear script
 root@pc:~# cat decompresor.sh
 #!/bin/bash
@@ -901,8 +918,10 @@ root@pc:~# cat decompresor.sh
 name_compressed=$(7z l content.gzip | grep "Name" -A 2 | tail -n 1 | awk 'NF{print $NF}')
 
 echo $name_compressed
+```
 
-#---------
+(Paso 2) Descomprimimos el archivo y
+```bash
 # ahora descomprimimos el archivo y controlamos la salida
 root@pc:~# cat decompresor.sh
 #!/bin/bash
@@ -935,7 +954,10 @@ Everything is Ok
 Size:       573
 Compressed: 606
 root@pc:~#
+```
 
+(Paso 3) Controlar el stderr stdout
+```bash
 # pero el stderr stdout no nos intereza mostar en el script
 root@pc:~# cat decompresor.sh
 #!/bin/bash
@@ -948,9 +970,34 @@ name_compressed=$(7z l content.gzip | grep "Name" -A 2 | tail -n 1 | awk 'NF{pri
 
 root@pc:~# ./decompresor.sh
 root@pc:~#
-
-
 ```
+
+Bucle
+```bash
+# se crea bucle infinito y se controla el exit con el codigo de estado $?
+# cuando es correcto da 0
+# cuando es erroneo da 1
+
+root@pc:~# cat decompresor.sh
+#!/bin/bash
+
+name_compressed=$(7z l content.gzip | grep "Name" -A 2 | tail -n 1 | awk 'NF{print $NF}')
+7z x content.gzip > /dev/null 2>&1
+
+while true; do
+	7z l $name_compressed > /dev/null 2>&1
+	if[ "$(echo $?)" == "0" ]; then
+		decompressed_next=$(7z l $name_compressed | grep "Name" -A 2 | tail -n 1 | awk 'NF{print $NF}')
+		7z x $name_compressed  > /dev/null 2>&1 && name_compressed=$decompressed_next
+	else
+		exit 0
+	fi
+done
+root@pc:~#
+```
+
+
+
 
 
 ```bash
