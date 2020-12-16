@@ -1275,6 +1275,5 @@ root@pc:~# pwdx 59764
 ```
 
 ## bandit14
-
 ```bash
 ```
