@@ -1034,18 +1034,247 @@ root@pc:~#
 
 ## bandit13
 ```bash
-
+bandit13@bandit:~$ cat sshkey.private
+-----BEGIN RSA PRIVATE KEY-----
+MIIEpAIBAAKCAQEAxkkOE83W2cOT7IWhFc9aPaaQmQDdgzuXCv+ppZHa++buSkN+
+gg0tcr7Fw8NLGa5+Uzec2rEg0WmeevB13AIoYp0MZyETq46t+jk9puNwZwIt9XgB
+ZufGtZEwWbFWw/vVLNwOXBe4UWStGRWzgPpEeSv5Tb1VjLZIBdGphTIK22Amz6Zb
+ThMsiMnyJafEwJ/T8PQO3myS91vUHEuoOMAzoUID4kN0MEZ3+XahyK0HJVq68KsV
+ObefXG1vvA3GAJ29kxJaqvRfgYnqZryWN7w3CHjNU4c/2Jkp+n8L0SnxaNA+WYA7
+jiPyTF0is8uzMlYQ4l1Lzh/8/MpvhCQF8r22dwIDAQABAoIBAQC6dWBjhyEOzjeA
+J3j/RWmap9M5zfJ/wb2bfidNpwbB8rsJ4sZIDZQ7XuIh4LfygoAQSS+bBw3RXvzE
+pvJt3SmU8hIDuLsCjL1VnBY5pY7Bju8g8aR/3FyjyNAqx/TLfzlLYfOu7i9Jet67
+xAh0tONG/u8FB5I3LAI2Vp6OviwvdWeC4nOxCthldpuPKNLA8rmMMVRTKQ+7T2VS
+nXmwYckKUcUgzoVSpiNZaS0zUDypdpy2+tRH3MQa5kqN1YKjvF8RC47woOYCktsD
+o3FFpGNFec9Taa3Msy+DfQQhHKZFKIL3bJDONtmrVvtYK40/yeU4aZ/HA2DQzwhe
+ol1AfiEhAoGBAOnVjosBkm7sblK+n4IEwPxs8sOmhPnTDUy5WGrpSCrXOmsVIBUf
+laL3ZGLx3xCIwtCnEucB9DvN2HZkupc/h6hTKUYLqXuyLD8njTrbRhLgbC9QrKrS
+M1F2fSTxVqPtZDlDMwjNR04xHA/fKh8bXXyTMqOHNJTHHNhbh3McdURjAoGBANkU
+1hqfnw7+aXncJ9bjysr1ZWbqOE5Nd8AFgfwaKuGTTVX2NsUQnCMWdOp+wFak40JH
+PKWkJNdBG+ex0H9JNQsTK3X5PBMAS8AfX0GrKeuwKWA6erytVTqjOfLYcdp5+z9s
+8DtVCxDuVsM+i4X8UqIGOlvGbtKEVokHPFXP1q/dAoGAcHg5YX7WEehCgCYTzpO+
+xysX8ScM2qS6xuZ3MqUWAxUWkh7NGZvhe0sGy9iOdANzwKw7mUUFViaCMR/t54W1
+GC83sOs3D7n5Mj8x3NdO8xFit7dT9a245TvaoYQ7KgmqpSg/ScKCw4c3eiLava+J
+3btnJeSIU+8ZXq9XjPRpKwUCgYA7z6LiOQKxNeXH3qHXcnHok855maUj5fJNpPbY
+iDkyZ8ySF8GlcFsky8Yw6fWCqfG3zDrohJ5l9JmEsBh7SadkwsZhvecQcS9t4vby
+9/8X4jS0P8ibfcKS4nBP+dT81kkkg5Z5MohXBORA7VWx+ACohcDEkprsQ+w32xeD
+qT1EvQKBgQDKm8ws2ByvSUVs9GjTilCajFqLJ0eVYzRPaY6f++Gv/UVfAPV4c+S0
+kAWpXbv5tbkkzbS0eaLPTKgLzavXtQoTtKwrjpolHKIHUz6Wu+n4abfAIRFubOdN
+/+aLoRQ0yBDRbdXMsZN/jvY44eM+xRLdRVyMmdPtP8belRi2E2aEzA==
+-----END RSA PRIVATE KEY-----
 ```
 
 ```bash
-
+bandit13@bandit:~$ file sshkey.private
+sshkey.private: PEM RSA private key
 ```
-
+### Uso de ssh
+Para practicar de forma local
+habilitamos #PermitRootLogin prohibit-password
+descomentamos y le asignanos yes
 
 ```bash
+root@pc:~# nano /etc/ssh/sshd_config
 
+#PermitRootLogin prohibit-password
+# lo dejamos ahora
+PermitRootLogin yes
+```
+Gestion del servicio ssh
+```bash
+root@pc:~# service ssh start
+root@pc:~# service ssh restart
+root@pc:~# service ssh status
+● ssh.service - OpenBSD Secure Shell server
+     Loaded: loaded (/lib/systemd/system/ssh.service; disabled; vendor preset: disabled)
+     Active: active (running) since Wed 2020-12-16 09:49:17 -05; 5s ago
+       Docs: man:sshd(8)
+             man:sshd_config(5)
+    Process: 12452 ExecStartPre=/usr/sbin/sshd -t (code=exited, status=0/SUCCESS)
+   Main PID: 12453 (sshd)
+      Tasks: 1 (limit: 14165)
+     Memory: 1.3M
+     CGroup: /system.slice/ssh.service
+             └─12453 sshd: /usr/sbin/sshd -D [listener] 0 of 10-100 startups
+
+Dec 16 09:49:17 pc systemd[1]: Starting OpenBSD Secure Shell server...
+Dec 16 09:49:17 pc sshd[12453]: Server listening on 0.0.0.0 port 22.
+Dec 16 09:49:17 pc sshd[12453]: Server listening on :: port 22.
+Dec 16 09:49:17 pc systemd[1]: Started OpenBSD Secure Shell server.
+root@pc:~#
 ```
 
 ```bash
+root@pc:~/.ssh# ls
+known_hosts
 
+# Crear ssh
+root@pc:~/.ssh# ssh-keygen
+
+# listar los archivos que se ha creado
+# id_rsa      => Es la clave privada
+# id_rsa.pub  => Es la clave publica
+root@pc:~/.ssh# ls
+id_rsa	id_rsa.pub  known_hosts
+```
+
+Hay dos concepto a tener en cuenta a la hora de acceder a una maquina por ssh, utilizando un fichero de identidad autorizado.
+
+Opcion 1:   
+Para que los usuarios no deban proporcinar la contraseña cuando se conectan al servidor ssh  
+La clave publica de cada uno de estos usuarios se debera alojar en el servidor ssh en el correspondiente directorio `~/.ssh/` de usuario para conectar y guardar como `authorized_keys`
+
+```bash
+root@pc:~/.ssh# cp id_rsa.pub authorized_keys
+root@pc:~/.ssh# ls
+authorized_keys  id_rsa  id_rsa.pub  known_hosts
+root@pc:~/.ssh#
+```
+
+Comprobar de namera local
+```bash
+root@pc:~/.ssh# ssh root@localhost
+root@pc:~#
+
+# verificar
+root@pc:~# whoami
+root
+root@pc:~# lsof -i:22
+COMMAND   PID USER   FD   TYPE DEVICE SIZE/OFF NODE NAME
+sshd    12453 root    3u  IPv4 123857      0t0  TCP *:ssh (LISTEN)
+sshd    12453 root    4u  IPv6 123859      0t0  TCP *:ssh (LISTEN)
+ssh     57807 root    3u  IPv6 200682      0t0  TCP localhost:54444->localhost:ssh (ESTABLISHED)
+sshd    57808 root    4u  IPv6 202075      0t0  TCP localhost:ssh->localhost:54444 (ESTABLISHED)
+root@pc:~# exit
+logout
+Connection to localhost closed.
+```
+
+Si se elimina el archivo `authorized_keys` ahora solicitará contraseña
+```bash
+root@pc:~/.ssh# rm authorized_keys
+root@pc:~/.ssh# ssh root@localhost
+root@localhost's password:
+```
+Opcion 2:   
+La forma que se implementara para el bandit13   
+Con el comando `ssh-copy-id` convertirlo el  fichero `id_rsa` en un fichero de identidad autorizado.
+pasandole al comando el usuario@ip_servidor_ssh
+```bash
+root@pc:~/.ssh# ls
+id_rsa	id_rsa.pub  known_hosts
+
+# usuario: root
+# maquina: localhost
+root@pc:~/.ssh# ssh-copy-id -i id_rsa root@localhost
+/usr/bin/ssh-copy-id: INFO: Source of key(s) to be installed: "id_rsa.pub"
+/usr/bin/ssh-copy-id: INFO: attempting to log in with the new key(s), to filter out any that are already installed
+/usr/bin/ssh-copy-id: INFO: 1 key(s) remain to be installed -- if you are prompted now it is to install the new keys
+/usr/bin/ssh-copy-id: 260: EOF: not found
+
+Number of key(s) added: 1
+
+Now try logging into the machine, with:   "ssh 'root@localhost'"
+and check to make sure that only the key(s) you wanted were added.
+
+# listamos archivos
+root@pc:~/.ssh# ls
+authorized_keys  id_rsa  id_rsa.pub  known_hosts
+```
+
+Es el archivo id_rsa el que se les comparte a los usuario para que se conecte.  
+Para conectarse un usuario serial de la siguietne manera
+```bash
+authorized_keys  id_rsa  id_rsa.pub  known_hosts
+root@pc:~/.ssh# ssh -i id_rsa root@localhost
+root@pc:~#
+```
+Solución del bandit13
+
+```bash
+bandit13@bandit:~$ ssh -i sshkey.private bandit14@localhost
+bandit14@bandit:~$ whoami
+bandit14
+bandit14@bandit:~$ cat /etc/bandit_pass/bandit14
+4wcYUJFw0k0XLShlDzztnTBHiqxU3b3e
+
+bandit14@bandit:~$ exit
+logout
+Connection to localhost closed.
+bandit13@bandit:~$ exit
+```
+### lsof y pwdx
+
+lsof => te permite listar los procesos que estan corriendo en tu sistema por un puerto especifico
+```bash
+root@pc:~# service apache2 start
+
+root@pc:~# lsof -i:80
+COMMAND   PID      USER   FD   TYPE DEVICE SIZE/OFF NODE NAME
+chrome   2153 jjvargass   65u  IPv6 259403      0t0  TCP localhost:43936->localhost:http (ESTABLISHED)
+apache2 59106      root    4u  IPv6 251490      0t0  TCP *:http (LISTEN)
+apache2 59113  www-data    4u  IPv6 251490      0t0  TCP *:http (LISTEN)
+apache2 59114  www-data    4u  IPv6 251490      0t0  TCP *:http (LISTEN)
+apache2 59115  www-data    4u  IPv6 251490      0t0  TCP *:http (LISTEN)
+apache2 59116  www-data    4u  IPv6 251490      0t0  TCP *:http (LISTEN)
+apache2 59117  www-data    4u  IPv6 251490      0t0  TCP *:http (LISTEN)
+apache2 59118  www-data    4u  IPv6 251490      0t0  TCP *:http (LISTEN)
+apache2 59398  www-data    4u  IPv6 251490      0t0  TCP *:http (LISTEN)
+```
+revisar proceso del navegador
+```bash
+root@pc:~# netstat -nat | grep "443"
+tcp        0      0 192.168.31.114:56018    142.250.78.165:443      ESTABLISHED
+tcp      130      0 192.168.31.114:47094    142.250.78.170:443      CLOSE_WAIT
+tcp        0      0 192.168.31.114:53606    172.217.172.10:443      ESTABLISHED
+tcp        0      0 192.168.31.114:54716    142.250.78.67:443       ESTABLISHED
+tcp        0      0 192.168.31.114:59058    173.194.216.188:443     ESTABLISHED
+tcp        0      0 192.168.31.114:51096    157.240.6.53:443        ESTABLISHED
+tcp        0      0 192.168.31.114:50714    172.217.28.110:443      ESTABLISHED
+tcp        0      0 192.168.31.114:57288    142.250.78.78:443       ESTABLISHED
+
+# El reemplazo de netstat es ahora ss
+root@pc:~# ss | grep https
+udp   ESTAB  0      0                                  192.168.31.114:49834       142.250.78.67:https        
+udp   ESTAB  0      0                                  192.168.31.114:46082     172.217.193.189:https        
+udp   ESTAB  0      0                                  192.168.31.114:38198       142.250.78.78:https        
+tcp   ESTAB  0      0                                  192.168.31.114:43764     172.217.173.197:https        
+tcp   ESTAB  0      0                                  192.168.31.114:54748       142.250.78.67:https        
+tcp   ESTAB  0      0                                  192.168.31.114:54716       142.250.78.67:https        
+tcp   ESTAB  0      0                                  192.168.31.114:59058     173.194.216.188:https        
+tcp   ESTAB  0      0                                  192.168.31.114:56724       142.250.78.46:https        
+tcp   ESTAB  0      0                                  192.168.31.114:51096        157.240.6.53:https        
+tcp   ESTAB  0      0                                  192.168.31.114:56726       142.250.78.46:https        
+mptcp ESTAB  0      0                                  192.168.31.114:43764     172.217.173.197:https        
+mptcp ESTAB  0      0                                  192.168.31.114:54748       142.250.78.67:https        
+mptcp ESTAB  0      0                                  192.168.31.114:54716       142.250.78.67:https        
+mptcp ESTAB  0      0                                  192.168.31.114:59058     173.194.216.188:https        
+mptcp ESTAB  0      0                                  192.168.31.114:56724       142.250.78.46:https        
+mptcp ESTAB  0      0                                  192.168.31.114:51096        157.240.6.53:https        
+mptcp ESTAB  0      0                                  192.168.31.114:56726       142.250.78.46:https
+```
+Podemos ver los servicios corriedno con lsof pero con el PID y con el comando `pwdx` podemos obtener la ruta donde se ejecuta el servicio
+```bash
+root@pc:~# lsof -i:22
+COMMAND   PID USER   FD   TYPE DEVICE SIZE/OFF NODE NAME
+sshd    58666 root    3u  IPv4 238912      0t0  TCP *:ssh (LISTEN)
+sshd    58666 root    4u  IPv6 238914      0t0  TCP *:ssh (LISTEN)
+root@pc:~# pwdx 58666
+58666: /
+
+# segundo ejemplo
+
+root@pc:/home/jjvargass# nc -nlvp 4646
+listening on [any] 4646 ...
+
+root@pc:~# lsof -i:4646
+COMMAND   PID USER   FD   TYPE DEVICE SIZE/OFF NODE NAME
+nc      59764 root    3u  IPv4 273775      0t0  TCP *:4646 (LISTEN)
+root@pc:~# pwdx 59764
+59764: /home/jjvargass
+```
+
+## bandit14
+
+```bash
 ```
