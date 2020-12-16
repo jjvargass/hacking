@@ -1275,5 +1275,303 @@ root@pc:~# pwdx 59764
 ```
 
 ## bandit14
+The password for the next level can be retrieved by submitting the password of the current level to port 30000 on localhost.
 ```bash
+# se verifica que el puerto este abierto
+bandit14@bandit:~$ echo '' > /dev/tcp/127.0.0.1/30000
+# debuelve codigo de estado exitoso
+bandit14@bandit:~$ echo $?
+0
+# con un puerto cerrado
+bandit14@bandit:~$ echo '' > /dev/tcp/127.0.0.1/30123
+-bash: connect: Connection refused
+-bash: /dev/tcp/127.0.0.1/30123: Connection refused
+bandit14@bandit:~$ echo $?
+1
 ```
+```bash
+bandit14@bandit:~$ echo '' > /dev/tcp/127.0.0.1/30000 && echo "[*] Puerto abierto" || echo "[*] Puerto cerrado"
+[*] Puerto abierto
+
+
+bandit14@bandit:~$ echo '' > /dev/tcp/127.0.0.1/30123 && echo "[*] Puerto abierto" || echo "[*] Puerto cerrado"
+-bash: connect: Connection refused
+-bash: /dev/tcp/127.0.0.1/30123: Connection refused
+[*] Puerto cerrado
+
+# eviamos los errores al /dev/null
+bandit14@bandit:~$ echo '' > /dev/tcp/127.0.0.1/30123 2>/dev/null && echo "[*] Puerto abierto" || echo "[*] Puerto cerrado"
+-bash: connect: Connection refused
+-bash: /dev/tcp/127.0.0.1/30123: Connection refused
+[*] Puerto cerrado
+
+# no funciona entonces bamos a intentar englovar todo el comando
+bandit14@bandit:~$ bash -c "echo '' > /dev/tcp/127.0.0.1/30123" 2>/dev/null && echo "[*] Puerto abierto" || echo "[*] Puerto cerrado"
+[*] Puerto cerrado
+
+# enviamos la passwor al puerto
+bandit14@bandit:~$ echo "4wcYUJFw0k0XLShlDzztnTBHiqxU3b3e" | nc localhost 30000
+Correct!
+BfMYroe26WYalil77FoDi9qh59eK5xNr
+
+# otra forma
+bandit14@bandit:~$ telnet localhost 30000
+Trying 127.0.0.1...
+Connected to localhost.
+Escape character is '^]'.
+4wcYUJFw0k0XLShlDzztnTBHiqxU3b3e
+Correct!
+BfMYroe26WYalil77FoDi9qh59eK5xNr
+
+Connection closed by foreign host.
+```
+
+## bandit15
+The password for the next level can be retrieved by submitting the password of the current level to port 30001 on localhost using SSL encryption.  
+Si realizamos los mismos metodos del ejercicio anterior no dan resultado, por lo que la información viaja encriptada
+```bash
+bandit15@bandit:~$ echo "BfMYroe26WYalil77FoDi9qh59eK5xNr" | nc localhost  30001
+bandit15@bandit:~$ telnet localhost 30001
+Trying 127.0.0.1...
+Connected to localhost.
+Escape character is '^]'.
+BfMYroe26WYalil77FoDi9qh59eK5xNr
+Connection closed by foreign host.
+bandit15@bandit:~$
+```
+Con `openssl` podemos actuar como cliente `s_client`
+```bash
+bandit15@bandit:~$ openssl s_client -connect 127.0.0.1:30001
+CONNECTED(00000003)
+depth=0 CN = localhost
+verify error:num=18:self signed certificate
+verify return:1
+depth=0 CN = localhost
+verify return:1
+---
+Certificate chain
+ 0 s:/CN=localhost
+   i:/CN=localhost
+---
+Server certificate
+-----BEGIN CERTIFICATE-----
+MIICBjCCAW+gAwIBAgIEDU18oTANBgkqhkiG9w0BAQUFADAUMRIwEAYDVQQDDAls
+b2NhbGhvc3QwHhcNMjAwNTA3MTgxNTQzWhcNMjEwNTA3MTgxNTQzWjAUMRIwEAYD
+VQQDDAlsb2NhbGhvc3QwgZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBAK3CPNFR
+FEypcqUa8NslmIMWl9xq53Cwhs/fvYHAvauyfE3uDVyyX79Z34Tkot6YflAoufnS
++puh2Kgq7aDaF+xhE+FPcz1JE0C2bflGfEtx4l3qy79SRpLiZ7eio8NPasvduG5e
+pkuHefwI4c7GS6Y7OTz/6IpxqXBzv3c+x93TAgMBAAGjZTBjMBQGA1UdEQQNMAuC
+CWxvY2FsaG9zdDBLBglghkgBhvhCAQ0EPhY8QXV0b21hdGljYWxseSBnZW5lcmF0
+ZWQgYnkgTmNhdC4gU2VlIGh0dHBzOi8vbm1hcC5vcmcvbmNhdC8uMA0GCSqGSIb3
+DQEBBQUAA4GBAC9uy1rF2U/OSBXbQJYuPuzT5mYwcjEEV0XwyiX1MFZbKUlyFZUw
+rq+P1HfFp+BSODtk6tHM9bTz+p2OJRXuELG0ly8+Nf/hO/mYS1i5Ekzv4PL9hO8q
+PfmDXTHs23Tc7ctLqPRj4/4qxw6RF4SM+uxkAuHgT/NDW1LphxkJlKGn
+-----END CERTIFICATE-----
+subject=/CN=localhost
+issuer=/CN=localhost
+---
+No client certificate CA names sent
+Peer signing digest: SHA512
+Server Temp Key: X25519, 253 bits
+---
+SSL handshake has read 1019 bytes and written 269 bytes
+Verification error: self signed certificate
+---
+New, TLSv1.2, Cipher is ECDHE-RSA-AES256-GCM-SHA384
+Server public key is 1024 bit
+Secure Renegotiation IS supported
+Compression: NONE
+Expansion: NONE
+No ALPN negotiated
+SSL-Session:
+    Protocol  : TLSv1.2
+    Cipher    : ECDHE-RSA-AES256-GCM-SHA384
+    Session-ID: A9BCDB0DE60EC2777D06069A5BFCC506654347F2D5A733FC9C28753BF34E76DF
+    Session-ID-ctx:
+    Master-Key: E27DD4F50B6580CF4DE824F2FED9B41918FEB9C355F1C7E1E925314357A7564960317A8467604344CFE2B55EC369C98F
+    PSK identity: None
+    PSK identity hint: None
+    SRP username: None
+    TLS session ticket lifetime hint: 7200 (seconds)
+    TLS session ticket:
+    0000 - aa 02 e6 3a 2e 0b c8 5d-6f 54 4a 1b 5a e0 2c 0e   ...:...]oTJ.Z.,.
+    0010 - 30 6b b7 42 d3 32 9d a6-6d dd 0b 7b c5 7f 27 62   0k.B.2..m..{..'b
+    0020 - 73 98 b5 dc a6 92 17 22-a6 3b ee 09 25 63 0e 4d   s......".;..%c.M
+    0030 - e4 f5 78 9d c6 33 c9 eb-40 54 67 fe bb 60 8b 35   ..x..3..@Tg..`.5
+    0040 - f9 21 d4 66 4b 50 d8 ee-ac 39 a1 6c f5 03 d2 50   .!.fKP...9.l...P
+    0050 - 2d b0 53 99 b0 88 d1 00-a7 3f 4a 95 f2 9e 0e 4f   -.S......?J....O
+    0060 - 82 6b 47 59 db a6 7e 50-65 ab a5 99 08 5f 8c 23   .kGY..~Pe...._.#
+    0070 - cb 2c 91 51 f8 ea 20 ec-e7 57 51 f0 c0 f0 8a 31   .,.Q.. ..WQ....1
+    0080 - 4a e8 c8 de 6a cd d1 2c-01 13 6b ba 8b 14 58 4f   J...j..,..k...XO
+    0090 - a6 68 11 7a 47 74 75 51-8c b4 e5 66 bf 44 0e 8c   .h.zGtuQ...f.D..
+
+    Start Time: 1608147387
+    Timeout   : 7200 (sec)
+    Verify return code: 18 (self signed certificate)
+    Extended master secret: yes
+---
+BfMYroe26WYalil77FoDi9qh59eK5xNr
+Correct!
+cluFn7wTiGryunymYOu4RcffSxQluehd
+
+closed
+```
+
+## bandit16
+The credentials for the next level can be retrieved by submitting the password of the current level to a port on localhost in the range 31000 to 32000. First find out which of these ports have a server listening on them. Then find out which of those speak SSL and which don’t. There is only 1 server that will give the next credentials, the others will simply send back to you whatever you send to it.
+
+```bash
+bandit16@bandit:~$ nmap --open -T5 -v -n -p31000-32000 127.0.0.1
+
+Starting Nmap 7.40 ( https://nmap.org ) at 2020-12-16 20:47 CET
+Initiating Ping Scan at 20:47
+Scanning 127.0.0.1 [2 ports]
+Completed Ping Scan at 20:47, 0.00s elapsed (1 total hosts)
+Initiating Connect Scan at 20:47
+Scanning 127.0.0.1 [1001 ports]
+Discovered open port 31691/tcp on 127.0.0.1
+Discovered open port 31960/tcp on 127.0.0.1
+Discovered open port 31518/tcp on 127.0.0.1
+Discovered open port 31046/tcp on 127.0.0.1
+Discovered open port 31790/tcp on 127.0.0.1
+Completed Connect Scan at 20:47, 0.04s elapsed (1001 total ports)
+Nmap scan report for 127.0.0.1
+Host is up (0.00028s latency).
+Not shown: 996 closed ports
+Some closed ports may be reported as filtered due to --defeat-rst-ratelimit
+PORT      STATE SERVICE
+31046/tcp open  unknown
+31518/tcp open  unknown
+31691/tcp open  unknown
+31790/tcp open  unknown
+31960/tcp open  unknown
+
+Read data files from: /usr/bin/../share/nmap
+Nmap done: 1 IP address (1 host up) scanned in 0.10 seconds
+```
+Ahora de estos 5 puertos revisar cual esta hablando por ssh
+```bash
+bandit16@bandit:~$ openssl s_client -connect 127.0.0.1:31790
+CONNECTED(00000003)
+depth=0 CN = localhost
+verify error:num=18:self signed certificate
+verify return:1
+depth=0 CN = localhost
+verify return:1
+---
+Certificate chain
+ 0 s:/CN=localhost
+   i:/CN=localhost
+---
+Server certificate
+-----BEGIN CERTIFICATE-----
+MIICBjCCAW+gAwIBAgIERpugdDANBgkqhkiG9w0BAQUFADAUMRIwEAYDVQQDDAls
+b2NhbGhvc3QwHhcNMjAxMjAzMTIyNTAyWhcNMjExMjAzMTIyNTAyWjAUMRIwEAYD
+VQQDDAlsb2NhbGhvc3QwgZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBAMeJ7q8+
+/5v/Q0OcS1qrtLv1GSYrXx8tddEmigEkXjxt96mbA62A7XPH6QZe5vVv6yOuS2JO
+AvtwxWXeb5lAkcR88pkvITjPa1QX+Q4LqNDpGs4evJDmBcX7NG8Sx9zFXChq5eRN
+Mis7GMk/RtwGbniNei1heI96rg2t0mRbR1kRAgMBAAGjZTBjMBQGA1UdEQQNMAuC
+CWxvY2FsaG9zdDBLBglghkgBhvhCAQ0EPhY8QXV0b21hdGljYWxseSBnZW5lcmF0
+ZWQgYnkgTmNhdC4gU2VlIGh0dHBzOi8vbm1hcC5vcmcvbmNhdC8uMA0GCSqGSIb3
+DQEBBQUAA4GBADYJu67M8KiVPJo1HZsO+TW4bRr8rtrEKdirbH3CUEsZo3Wx6/PP
+C8w/rWjx7CnnjF4qrpZLFlZ2TY+/pNOIBhixCKS9MHZXVix4GAHP3BkUCExc1jE9
+mp1AQwblNeka4fPVkIrHfrRZQRJr96wT+YejVQqenVX6cFF2xpkpD+Me
+-----END CERTIFICATE-----
+subject=/CN=localhost
+issuer=/CN=localhost
+---
+No client certificate CA names sent
+Peer signing digest: SHA512
+Server Temp Key: X25519, 253 bits
+---
+SSL handshake has read 1019 bytes and written 269 bytes
+Verification error: self signed certificate
+---
+New, TLSv1.2, Cipher is ECDHE-RSA-AES256-GCM-SHA384
+Server public key is 1024 bit
+Secure Renegotiation IS supported
+Compression: NONE
+Expansion: NONE
+No ALPN negotiated
+SSL-Session:
+    Protocol  : TLSv1.2
+    Cipher    : ECDHE-RSA-AES256-GCM-SHA384
+    Session-ID: 05C045E5583B3BE5D8F2DD0FEFF69DC2124FE40CAB5815DF77EF0C66D4363C17
+    Session-ID-ctx:
+    Master-Key: 87B37AF8579C7F7D2D3B2F5F91B7D6E59E01E71BF384D2F1F787C039BDAC64088B54D8DFF22E2E9CBEF5DFE1D9184841
+    PSK identity: None
+    PSK identity hint: None
+    SRP username: None
+    TLS session ticket lifetime hint: 7200 (seconds)
+    TLS session ticket:
+    0000 - 71 44 15 26 06 51 98 56-4a 2f 37 3a 47 04 b9 e3   qD.&.Q.VJ/7:G...
+    0010 - e7 66 02 25 ba c8 ca 47-e1 b4 db c9 d1 34 07 2e   .f.%...G.....4..
+    0020 - ee a5 32 ee 70 4f 1a b2-94 1c 01 12 a1 25 7e 18   ..2.pO.......%~.
+    0030 - 3b a5 c4 7f 80 06 ec ae-f5 fe c0 9f 85 fa 2d 83   ;.............-.
+    0040 - b3 75 09 19 22 d2 ec eb-fd 12 36 5f ad 32 68 1f   .u..".....6_.2h.
+    0050 - ca 34 83 ac 1d 47 aa f3-b4 57 65 5f ca 29 f9 c3   .4...G...We_.)..
+    0060 - fa 4d 04 5f 24 18 f5 49-40 46 1f 6a be 86 e6 a4   .M._$..I@F.j....
+    0070 - 80 3a 1a 13 09 52 46 3a-b5 4c 9b 60 08 a9 ff 54   .:...RF:.L.`...T
+    0080 - 8d 6d d3 7b 32 64 66 db-09 5f 42 ed db e7 69 a6   .m.{2df.._B...i.
+    0090 - f5 28 53 ee d6 60 eb d3-ec f6 c5 26 3a 97 37 4f   .(S..`.....&:.7O
+
+    Start Time: 1608148240
+    Timeout   : 7200 (sec)
+    Verify return code: 18 (self signed certificate)
+    Extended master secret: yes
+---
+cluFn7wTiGryunymYOu4RcffSxQluehd
+Correct!
+-----BEGIN RSA PRIVATE KEY-----
+MIIEogIBAAKCAQEAvmOkuifmMg6HL2YPIOjon6iWfbp7c3jx34YkYWqUH57SUdyJ
+imZzeyGC0gtZPGujUSxiJSWI/oTqexh+cAMTSMlOJf7+BrJObArnxd9Y7YT2bRPQ
+Ja6Lzb558YW3FZl87ORiO+rW4LCDCNd2lUvLE/GL2GWyuKN0K5iCd5TbtJzEkQTu
+DSt2mcNn4rhAL+JFr56o4T6z8WWAW18BR6yGrMq7Q/kALHYW3OekePQAzL0VUYbW
+JGTi65CxbCnzc/w4+mqQyvmzpWtMAzJTzAzQxNbkR2MBGySxDLrjg0LWN6sK7wNX
+x0YVztz/zbIkPjfkU1jHS+9EbVNj+D1XFOJuaQIDAQABAoIBABagpxpM1aoLWfvD
+KHcj10nqcoBc4oE11aFYQwik7xfW+24pRNuDE6SFthOar69jp5RlLwD1NhPx3iBl
+J9nOM8OJ0VToum43UOS8YxF8WwhXriYGnc1sskbwpXOUDc9uX4+UESzH22P29ovd
+d8WErY0gPxun8pbJLmxkAtWNhpMvfe0050vk9TL5wqbu9AlbssgTcCXkMQnPw9nC
+YNN6DDP2lbcBrvgT9YCNL6C+ZKufD52yOQ9qOkwFTEQpjtF4uNtJom+asvlpmS8A
+vLY9r60wYSvmZhNqBUrj7lyCtXMIu1kkd4w7F77k+DjHoAXyxcUp1DGL51sOmama
++TOWWgECgYEA8JtPxP0GRJ+IQkX262jM3dEIkza8ky5moIwUqYdsx0NxHgRRhORT
+8c8hAuRBb2G82so8vUHk/fur85OEfc9TncnCY2crpoqsghifKLxrLgtT+qDpfZnx
+SatLdt8GfQ85yA7hnWWJ2MxF3NaeSDm75Lsm+tBbAiyc9P2jGRNtMSkCgYEAypHd
+HCctNi/FwjulhttFx/rHYKhLidZDFYeiE/v45bN4yFm8x7R/b0iE7KaszX+Exdvt
+SghaTdcG0Knyw1bpJVyusavPzpaJMjdJ6tcFhVAbAjm7enCIvGCSx+X3l5SiWg0A
+R57hJglezIiVjv3aGwHwvlZvtszK6zV6oXFAu0ECgYAbjo46T4hyP5tJi93V5HDi
+Ttiek7xRVxUl+iU7rWkGAXFpMLFteQEsRr7PJ/lemmEY5eTDAFMLy9FL2m9oQWCg
+R8VdwSk8r9FGLS+9aKcV5PI/WEKlwgXinB3OhYimtiG2Cg5JCqIZFHxD6MjEGOiu
+L8ktHMPvodBwNsSBULpG0QKBgBAplTfC1HOnWiMGOU3KPwYWt0O6CdTkmJOmL8Ni
+blh9elyZ9FsGxsgtRBXRsqXuz7wtsQAgLHxbdLq/ZJQ7YfzOKU4ZxEnabvXnvWkU
+YOdjHdSOoKvDQNWu6ucyLRAWFuISeXw9a/9p7ftpxm0TSgyvmfLF2MIAEwyzRqaM
+77pBAoGAMmjmIJdjp+Ez8duyn3ieo36yrttF5NSsJLAbxFpdlc1gvtGCWW+9Cq0b
+dxviW8+TFVEBl1O4f7HVm6EpTscdDxU+bCXWkfjuRb7Dy9GOtt9JPsX8MBTakzh3
+vBgsyi/sN3RqRBcGU40fOoZyfAMT8s1m/uYv52O6IgeuZ/ujbjY=
+-----END RSA PRIVATE KEY-----
+
+closed
+```
+Ha proporcionado llave privada
+```bash
+# creadmos directorio temporal
+bandit16@bandit:~$ mktemp -d
+/tmp/tmp.T3nRBubidN
+bandit16@bandit:~$ cd /tmp/tmp.T3nRBubidN
+bandit16@bandit:/tmp/tmp.T3nRBubidN$
+
+# copiammos la llave que se nos porporcionó
+bandit16@bandit:/tmp/tmp.T3nRBubidN$ nano id_rsa
+
+# Asignamos correctos permisos
+bandit16@bandit:/tmp/tmp.T3nRBubidN$ chmod 600 id_rsa
+
+# ahora nos conectamos por ssh con bandit17
+bandit16@bandit:/tmp/tmp.T3nRBubidN$ ssh -i id_rsa bandit17@localhost
+
+# obtenemos la contraseña de bandit17
+bandit17@bandit:~$ cat /etc/bandit_pass/bandit17
+xLYVMN9WE5zQ5vHacb0sZEVqbrp7nBTn
+```
+
+## bandit17
