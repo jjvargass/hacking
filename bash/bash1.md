@@ -2122,4 +2122,352 @@ bash-4.4$ cat /etc/bandit_pass/bandit27
 3ba3118a22e93127a4ed485be72ef5ea
 ```
 
+## bandit27
+There is a git repository at ssh://bandit27-git@localhost/home/bandit27-git/repo. The password for the user bandit27-git is the same as for the user bandit27.
+```bash
+bandit27@bandit:~$ ls
+bandit27@bandit:~$ mktemp -d
+/tmp/tmp.YCtpcIUTnG
+bandit27@bandit:~$ cd /tmp/tmp.YCtpcIUTnG
+bandit27@bandit:/tmp/tmp.YCtpcIUTnG$ 
+
+bandit27@bandit:/tmp/tmp.YCtpcIUTnG$ git clone  ssh://bandit27-git@localhost/home/bandit27-git/repo
+bandit27@bandit:/tmp/tmp.YCtpcIUTnG$ ls
+repo
+bandit27@bandit:/tmp/tmp.YCtpcIUTnG$ cd repo/
+bandit27@bandit:/tmp/tmp.YCtpcIUTnG/repo$ ls
+README
+bandit27@bandit:/tmp/tmp.YCtpcIUTnG/repo$ cat README 
+The password to the next level is: 0ef186ac70e04ea33b4c1853d2526fa2
+bandit27@bandit:/tmp/tmp.YCtpcIUTnG/repo$ 
+```
+
 ## bandit28
+There is a git repository at ssh://bandit28-git@localhost/home/bandit28-git/repo. The password for the user bandit28-git is the same as for the user bandit28.
+```bash
+bandit28@bandit:~$ cd /dev/shm/
+-bash: cd: /dev/shm/: Permission denied
+bandit28@bandit:~$ mktemp -d
+/tmp/tmp.gZS3oPHTkB
+bandit28@bandit:~$ cd /tmp/tmp.gZS3oPHTkB
+bandit28@bandit:/tmp/tmp.gZS3oPHTkB$
+
+bandit28@bandit:/tmp/tmp.gZS3oPHTkB$ git clone ssh://bandit28-git@localhost/home/bandit28-git/repo
+bandit28@bandit:/tmp/tmp.gZS3oPHTkB$ ls
+repo
+bandit28@bandit:/tmp/tmp.gZS3oPHTkB$ cd repo/
+bandit28@bandit:/tmp/tmp.gZS3oPHTkB/repo$ ls
+README.md
+bandit28@bandit:/tmp/tmp.gZS3oPHTkB/repo$ cat README.md 
+# Bandit Notes
+Some notes for level29 of bandit.
+
+## credentials
+
+- username: bandit29
+- password: xxxxxxxxxx
+
+
+bandit28@bandit:/tmp/tmp.gZS3oPHTkB/repo$ ls -la
+total 16
+drwxr-sr-x 3 bandit28 root 4096 Dec 20 20:23 .
+drwx--S--- 3 bandit28 root 4096 Dec 20 20:23 ..
+drwxr-sr-x 8 bandit28 root 4096 Dec 20 20:23 .git
+-rw-r--r-- 1 bandit28 root  111 Dec 20 20:23 README.md
+
+# podemos revisar los logs del repo
+bandit28@bandit:/tmp/tmp.gZS3oPHTkB/repo$ git log -p
+commit edd935d60906b33f0619605abd1689808ccdd5ee
+Author: Morla Porla <morla@overthewire.org>
+Date:   Thu May 7 20:14:49 2020 +0200
+
+    fix info leak
+
+diff --git a/README.md b/README.md
+index 3f7cee8..5c6457b 100644
+--- a/README.md
++++ b/README.md
+@@ -4,5 +4,5 @@ Some notes for level29 of bandit.
+ ## credentials
+ 
+ - username: bandit29
+-- password: bbc96594b4e001778eee9975372716b2
++- password: xxxxxxxxxx
+```
+
+## bandit29
+There is a git repository at ssh://bandit29-git@localhost/home/bandit29-git/repo. The password for the user bandit29-git is the same as for the user bandit29.
+```bash
+bandit29@bandit:~$ mktemp -d
+/tmp/tmp.94R4Qtx6Hq
+bandit29@bandit:~$ cd /tmp/tmp.94R4Qtx6Hq
+bandit29@bandit:/tmp/tmp.94R4Qtx6Hq$ git clone ssh://bandit29-git@localhost/home/bandit29-git/repo
+bandit29@bandit:/tmp/tmp.94R4Qtx6Hq$ cd repo/
+bandit29@bandit:/tmp/tmp.94R4Qtx6Hq/repo$ ls
+README.md
+bandit29@bandit:/tmp/tmp.94R4Qtx6Hq/repo$ cat README.md 
+# Bandit Notes
+Some notes for bandit30 of bandit.
+
+## credentials
+
+- username: bandit30
+- password: <no passwords in production!>
+
+
+bandit29@bandit:/tmp/tmp.94R4Qtx6Hq/repo$ git log -p
+commit 208f463b5b3992906eabf23c562eda3277fea912
+Author: Ben Dover <noone@overthewire.org>
+Date:   Thu May 7 20:14:51 2020 +0200
+
+    fix username
+
+diff --git a/README.md b/README.md
+index 2da2f39..1af21d3 100644
+--- a/README.md
++++ b/README.md
+@@ -3,6 +3,6 @@ Some notes for bandit30 of bandit.
+ 
+ ## credentials
+ 
+-- username: bandit29
++- username: bandit30
+ - password: <no passwords in production!>
+ 
+
+bandit29@bandit:/tmp/tmp.94R4Qtx6Hq/repo$ git branch -r
+  origin/HEAD -> origin/master
+  origin/dev
+  origin/master
+  origin/sploits-dev
+
+bandit29@bandit:/tmp/tmp.94R4Qtx6Hq/repo$ git checkout dev
+Branch dev set up to track remote branch dev from origin.
+Switched to a new branch 'dev'
+
+bandit29@bandit:/tmp/tmp.94R4Qtx6Hq/repo$ git log -p
+commit bc833286fca18a3948aec989f7025e23ffc16c07
+Author: Morla Porla <morla@overthewire.org>
+Date:   Thu May 7 20:14:52 2020 +0200
+
+    add data needed for development
+
+diff --git a/README.md b/README.md
+index 1af21d3..39b87a8 100644
+--- a/README.md
++++ b/README.md
+@@ -4,5 +4,5 @@ Some notes for bandit30 of bandit.
+ ## credentials
+ 
+ - username: bandit30
+-- password: <no passwords in production!>
++- password: 5b90576bedb2cc04c86a9e924ce42faf
+```
+
+## bandit30
+There is a git repository at ssh://bandit30-git@localhost/home/bandit30-git/repo. The password for the user bandit30-git is the same as for the user bandit30.
+```bash
+bandit30@bandit:~$ mktemp -d 
+/tmp/tmp.4IrAhNzcxN
+bandit30@bandit:~$ cd /tmp/tmp.4IrAhNzcxN
+bandit30@bandit:/tmp/tmp.4IrAhNzcxN$ 
+
+bandit30@bandit:/tmp/tmp.4IrAhNzcxN$ git clone ssh://bandit30-git@localhost/home/bandit30-git/repo
+bandit30@bandit:/tmp/tmp.4IrAhNzcxN$ ls
+repo
+bandit30@bandit:/tmp/tmp.4IrAhNzcxN$ cd repo/
+bandit30@bandit:/tmp/tmp.4IrAhNzcxN/repo$ 
+bandit30@bandit:/tmp/tmp.4IrAhNzcxN/repo$ cat README.md 
+just an epmty file... muahaha
+```
+
+```bash
+bandit30@bandit:/tmp/tmp.4IrAhNzcxN/repo$ git log -p
+commit 3aefa229469b7ba1cc08203e5d8fa299354c496b
+Author: Ben Dover <noone@overthewire.org>
+Date:   Thu May 7 20:14:54 2020 +0200
+
+    initial commit of README.md
+
+diff --git a/README.md b/README.md
+new file mode 100644
+index 0000000..029ba42
+--- /dev/null
++++ b/README.md
+@@ -0,0 +1 @@
++just an epmty file... muahaha
+
+bandit30@bandit:/tmp/tmp.4IrAhNzcxN/repo$ git branch -r
+  origin/HEAD -> origin/master
+  origin/master
+
+# recorda que tambien estan los tag
+bandit30@bandit:/tmp/tmp.4IrAhNzcxN/repo$ git tag
+secret
+bandit30@bandit:/tmp/tmp.4IrAhNzcxN/repo$ git show secret 
+47e603bb428404d265f59c42920d81e5
+```
+
+## bandit31
+There is a git repository at ssh://bandit31-git@localhost/home/bandit31-git/repo. The password for the user bandit31-git is the same as for the user bandit31.
+```bash
+bandit31@bandit:~$ cd $(mktemp -d)
+bandit31@bandit:/tmp/tmp.7XEEtZBaVd$ 
+
+bandit31@bandit:/tmp/tmp.7XEEtZBaVd$ git clone  ssh://bandit31-git@localhost/home/bandit31-git/repo
+bandit31@bandit:/tmp/tmp.7XEEtZBaVd$ ls
+repo
+bandit31@bandit:/tmp/tmp.7XEEtZBaVd$ cd repo/
+bandit31@bandit:/tmp/tmp.7XEEtZBaVd/repo$ ls
+README.md
+
+bandit31@bandit:/tmp/tmp.7XEEtZBaVd/repo$ cat README.md 
+This time your task is to push a file to the remote repository.
+
+Details:
+    File name: key.txt
+    Content: 'May I come in?'
+    Branch: master
+
+
+bandit31@bandit:/tmp/tmp.7XEEtZBaVd/repo$ touch key.txt
+bandit31@bandit:/tmp/tmp.7XEEtZBaVd/repo$ echo "May I come in?" > key.txt 
+bandit31@bandit:/tmp/tmp.7XEEtZBaVd/repo$ git branch -r
+  origin/HEAD -> origin/master
+  origin/master
+
+bandit31@bandit:/tmp/tmp.7XEEtZBaVd/repo$ git add key.txt
+The following paths are ignored by one of your .gitignore files:
+key.txt
+Use -f if you really want to add them.
+
+bandit31@bandit:/tmp/tmp.7XEEtZBaVd/repo$ cat .gitignore 
+*.txt
+bandit31@bandit:/tmp/tmp.7XEEtZBaVd/repo$ rm .gitignore 
+bandit31@bandit:/tmp/tmp.7XEEtZBaVd/repo$ git add .
+bandit31@bandit:/tmp/tmp.7XEEtZBaVd/repo$ git commit  -m "jjvargass"
+[master 0020ba4] jjvargass
+ 2 files changed, 1 insertion(+), 1 deletion(-)
+ delete mode 100644 .gitignore
+ create mode 100644 key.txt
+bandit31@bandit:/tmp/tmp.7XEEtZBaVd/repo$ git push 
+Could not create directory '/home/bandit31/.ssh'.
+The authenticity of host 'localhost (127.0.0.1)' can't be established.
+ECDSA key fingerprint is SHA256:98UL0ZWr85496EtCRkKlo20X3OPnyPSB5tB5RPbhczc.
+Are you sure you want to continue connecting (yes/no)? yes
+Failed to add the host to the list of known hosts (/home/bandit31/.ssh/known_hosts).
+This is a OverTheWire game server. More information on http://www.overthewire.org/wargames
+
+bandit31-git@localhost's password: 
+Counting objects: 3, done.
+Delta compression using up to 2 threads.
+Compressing objects: 100% (2/2), done.
+Writing objects: 100% (3/3), 285 bytes | 0 bytes/s, done.
+Total 3 (delta 0), reused 0 (delta 0)
+remote: ### Attempting to validate files... ####
+remote: 
+remote: .oOo.oOo.oOo.oOo.oOo.oOo.oOo.oOo.oOo.oOo.
+remote: 
+remote: Well done! Here is the password for the next level:
+remote: 56a9bf19c63d650ce78e6ec0354ee45e
+remote: 
+remote: .oOo.oOo.oOo.oOo.oOo.oOo.oOo.oOo.oOo.oOo.
+remote: 
+To ssh://localhost/home/bandit31-git/repo
+ ! [remote rejected] master -> master (pre-receive hook declined)
+error: failed to push some refs to 'ssh://bandit31-git@localhost/home/bandit31-git/repo'
+```
+
+## bandit32
+After all this git stuff its time for another escape. Good luck!
+```bash
+ For your convenience we have installed a few usefull tools which you can find
+ in the following locations:
+
+    * gef (https://github.com/hugsy/gef) in /usr/local/gef/
+    * pwndbg (https://github.com/pwndbg/pwndbg) in /usr/local/pwndbg/
+    * peda (https://github.com/longld/peda.git) in /usr/local/peda/
+    * gdbinit (https://github.com/gdbinit/Gdbinit) in /usr/local/gdbinit/
+    * pwntools (https://github.com/Gallopsled/pwntools)
+    * radare2 (http://www.radare.org/)
+    * checksec.sh (http://www.trapkit.de/tools/checksec.html) in /usr/local/bin/checksec.sh
+
+--[ More information ]--
+
+  For more information regarding individual wargames, visit
+  http://www.overthewire.org/wargames/
+
+  For support, questions or comments, contact us through IRC on
+  irc.overthewire.org #wargames.
+
+  Enjoy your stay!
+
+WELCOME TO THE UPPERCASE SHELL
+>> 
+```
+
+debemos escapar
+```bash
+WELCOME TO THE UPPERCASE SHELL
+>> hola
+sh: 1: HOLA: not found
+>> whoami
+sh: 1: WHOAMI: not found
+>> 
+
+# entendiendo y testeando en local
+root@pc:~# echo WHOAMI
+WHOAMI
+root@pc:~# echo WHOAMI | tr '[A-Z]' '[a-z]'
+whoami
+# pero no aplica porque de la misma forma el tr quedaria en mayuscula y daria problema
+>> $PWD
+sh: 1: /home/bandit32: Permission denied
+```
+### Ejecución de bash
+El argumento 0 siempre nos dice el tipo de shell con el que estamos
+```bash
+# estos comandos hacen lo mismo
+root@pc:~# bash
+root@pc:~# echo $0
+bash
+root@pc:~# tty
+/dev/pts/2
+
+# si ahora expauneo otra shell
+root@pc:~# $0
+root@pc:~# tty 
+/dev/pts/2  # deberia tener otro numero
+```
+
+
+Retomando el reto
+```bash
+>> $0
+$ whoami	
+bandit33
+$ cat /etc/bandit_pass/bandit33	
+c9c3199ddf4121b10cf581a98d51caee
+$ 
+
+```
+
+
+## bandit33
+At this moment, level 34 does not exist yet.
+
+
+```bash
+bandit33@bandit:~$ ls
+README.txt
+bandit33@bandit:~$ cat README.txt 
+Congratulations on solving the last level of this game!
+
+At this moment, there are no more levels to play in this game. However, we are constantly working
+on new levels and will most likely expand this game with more levels soon.
+Keep an eye out for an announcement on our usual communication channels!
+In the meantime, you could play some of our other wargames.
+
+If you have an idea for an awesome new level, please let us know!
+bandit33@bandit:~$ 
+```
