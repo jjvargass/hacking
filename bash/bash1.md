@@ -3,6 +3,8 @@
 Se realizara los ejercicio se [overthewire](https://overthewire.org/wargames/) capitulo de Bandit
 
 ## bandit0
+The password for the next level is stored in a file called readme located in the home directory. Use this password to log into bandit1 using SSH. Whenever you find a password for a level, use SSH (on port 2220) to log into that level and continue the game.
+
 ```bash
 bandit0@bandit:~$ hostname -I
 192.168.101.80
@@ -24,6 +26,7 @@ bandit0@bandit:~$ which docker
 ```
 
 ## bandit1
+The password for the next level is stored in a file called - located in the home directory
 ```bash
 bandit1@bandit:~$ whoami
 bandit1
@@ -46,6 +49,7 @@ CV1DtqXWVFXTvM2F0k09SHz0YwRINYA9
 ```
 
 ## bandit2
+The password for the next level is stored in a file called spaces in this filename located in the home directory
 ```bash
 bandit2@bandit:~$ ls
 spaces in this filename
@@ -68,13 +72,16 @@ UmHadQclWmgdLOKQ3YNgjWxGoRMb5luK
 ```
 
 ## bandit3
+The password for the next level is stored in a hidden file in the inhere directory.
 ```bash
 bandit3@bandit:~$ ls -la inhere/
 total 12
 drwxr-xr-x 2 root    root    4096 May  7  2020 .
 drwxr-xr-x 3 root    root    4096 May  7  2020 ..
 -rw-r----- 1 bandit4 bandit3   33 May  7  2020 .hidden
-
+```
+### find
+```bash
 # busca cualquier cosa desde el directorio actual de forma recursiva
 bandit3@bandit:~$ find .
 .
@@ -102,20 +109,25 @@ bandit3@bandit:~$ find . -type f -printf "%f\t%p\t%u\t%g\t%m\n"
 .bashrc	./.bashrc	root	root	644
 .profile	./.profile	root	root	644
 .bash_logout	./.bash_logout	root	root	644
-
+```
+### column 
+```bash
 # para ordenar
 bandit3@bandit:~$ find . -type f -printf "%f\t%p\t%u\t%g\t%m\n" | column -t
 .hidden       ./inhere/.hidden  bandit4  bandit3  640
 .bashrc       ./.bashrc         root     root     644
 .profile      ./.profile        root     root     644
 .bash_logout  ./.bash_logout    root     root     644
-
-
+```
+obtenemos la flag
+```bash
 bandit3@bandit:~$ cat inhere/.hidden
 pIwrPrtPN36QITSp3EQaw936yaFoFgAB
+```
 
-# xargs es util para de forma paralela ejecutar comandos sobre el output de un comando ejecutado anteriormente.
-
+### xargs
+xargs es util para de forma paralela ejecutar comandos sobre el output de un comando ejecutado anteriormente.
+```bash
 # sabemos la salida del primer comando
 bandit3@bandit:~$ find . -name .hidden
 ./inhere/.hidden
@@ -154,6 +166,7 @@ bandit3@bandit:~$ find . -type f | xargs grep "leaving"
 ```
 
 ## bandit4
+The password for the next level is stored in the only human-readable file in the inhere directory. Tip: if your terminal is messed up, try the “reset” command.
 ```bash
 bandit4@bandit:~$ ls -l inhere/
 total 40
@@ -167,9 +180,11 @@ total 40
 -rw-r----- 1 bandit5 bandit4 33 May  7  2020 -file07
 -rw-r----- 1 bandit5 bandit4 33 May  7  2020 -file08
 -rw-r----- 1 bandit5 bandit4 33 May  7  2020 -file09
+```
 
+### file 
+```bash
 # se debe revisar el archivo humanamente legible, para esto usar los Magic number
-
 bandit4@bandit:~$ find . -name -file* | xargs file
 ./inhere/-file01: data
 ./inhere/-file00: data
@@ -185,11 +200,12 @@ bandit4@bandit:~$ find . -name -file* | xargs file
 bandit4@bandit:~$ find . -name -file07 | xargs cat
 koReBOKuIDDepwhWk7jZC0RTdopnAYKh
 
+# comando $()
 bandit4@bandit:~$ cat $(find . -name -file07)  
 koReBOKuIDDepwhWk7jZC0RTdopnAYKh
 ```
 
-Ejemplo de Magic Number
+#### Ejemplo de Magic Number
 ```bash
 root@pc:~# file 1.htb.jpg
 1.htb.jpg: JPEG image data, Exif standard: [TIFF image data, big-endian, direntries=7, orientation=upper-left, xresolution=98, yresolution=106, resolutionunit=2, software=Adobe Photoshop CC (Windows), datetime=2019:12:04 07:34:10], progressive, precision 8, 1920x1080, components 3
@@ -213,6 +229,7 @@ root@pc:~#
 ```
 
 ## bandit5
+The password for the next level is stored in a file somewhere under the inhere directory and has all of the following properties:
 ```bash
 bandit5@bandit:~$ ls -l inhere/
 total 80
@@ -253,14 +270,17 @@ bandit5@bandit:~$ find .
 ./inhere/maybehere03/.file1
 ./inhere/maybehere19
 ./inhere/maybehere19/.file2
+```
 
-
-# como buscamos archiov -type f
-# que sea readable entonces -readable Tambien exitse las opciones (-executable  -writable)
+#### find parametros
+```bash
+# Para buscar archiov: -type f
+# Que sea readable entonces: -readable Tambien exitse las opciones (-executable  -writable)
 # -size filtar por el tamaño, para especificar bytes agregasr "c"
 bandit5@bandit:~$ find . -type f -readable  -size 1033c
 ./inhere/maybehere07/.file2
 
+# se agrega xargas cat para leer el archivo filtrado
 bandit5@bandit:~$ find . -type f -readable  -size 1033c | xargs cat
 DXjZPULLxYr17uwoI01bNLQbtFemEgo7
 
@@ -271,17 +291,21 @@ DXjZPULLxYr17uwoI01bNLQbtFemEgo7
 # de la misma forma como se limpio el archio utilizaremos  tr opcion -d para eliminar
 bandit5@bandit:~$ find . -type f -readable  -size 1033c | xargs cat  | tr -d ' '
 DXjZPULLxYr17uwoI01bNLQbtFemEgo7
+```
 
-# sed 's/argumento/aloqueloqueremosconvertir'
-# sed 's/root/miusuario/' => cambie root en el archivo por miusuario
-
-# s/^ *  reemplace todo lo que inicie con espacio en blanco y cualquier cosa  - cambielo por nada
-
+### sed
+sed 's/argumento/aloqueloqueremosconvertir'  
+sed 's/root/miusuario/' => cambie root en el archivo por miusuario
+```bash
+# sed 's/^ *//'
+# s/^ *           reemplace todo lo que inicie con espacio en blanco y cualquier cosa
+# //              cambielo por nada
 bandit5@bandit:~$ find . -type f -readable ! -executable  -size 1033c | xargs cat  | sed 's/^ *//'
 DXjZPULLxYr17uwoI01bNLQbtFemEgo7
 
-# \s espacions
-# /d  vacio
+# ^     todo lo que inicia
+# \s    espacions
+# /d    vacio
 bandit5@bandit:~$ find . -type f -readable ! -executable  -size 1033c | xargs cat  | sed '/^\s*$/d'
 DXjZPULLxYr17uwoI01bNLQbtFemEgo7
 
@@ -296,7 +320,7 @@ root@pc:~# cat /usr/share/wordlists/rockyou.txt | grep "^hola$" -n
 19994:hola
 ```
 
-Comando head y tail
+### head y tail
 ```bash
 # nostara la n linesas de un archivo
 root@pc:~# cat /etc/passwd | head -n 1
@@ -316,21 +340,12 @@ root@pc:~# cat /etc/passwd | awk 'NR==2'
 daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
 ```
 
-Sed
+### sed
 ```bash
-root@pc:~# cat file.txt | head -n 6
-root:x:0:0:root:/root:/bin/bash
-daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
-bin:x:2:2:bin:/bin:/usr/sbin/nologin
-sys:x:3:3:sys:/dev:/usr/sbin/nologin
-sync:x:4:65534:sync:/bin:/bin/sync
-games:x:5:60:games:/usr/games:/usr/sbin/nologin
-
-# sed sustitulle
 root@pc:~# cat file.txt | head -n 1
 root:x:0:0:root:/root:/bin/bash
 
-# y porque no lo realizo en todos los root
+# Sustitución aplicacio en el primer coincidencia
 root@pc:~# cat file.txt | head -n 1  | sed 's/root/miusuario/'
 miusuario:x:0:0:root:/root:/bin/bash
 
@@ -344,7 +359,7 @@ root@pc:~# cat /etc/passwd | grep root
 root:x:0:0:root:/root:/bin/bash
 nm-openvpn:x:125:130:NetworkManager OpenVPN,,,:/var/lib/openvpn/chroot:/usr/sbin/nologin
 
-# para especificar con expreciones regulares  las que comiencen con r
+# para especificar con expreciones regulares las que comiencen con r
 root@pc:~# cat /etc/passwd | grep "^root"
 root:x:0:0:root:/root:/bin/bash
 ```
