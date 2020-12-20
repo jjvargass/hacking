@@ -365,6 +365,8 @@ root:x:0:0:root:/root:/bin/bash
 ```
 
 ## bandit6
+The password for the next level is stored somewhere on the server and has all of the following properties:
+
 ```bash
 bandit6@bandit:~$ find / -user bandit7 -group bandit6 -size 33c
 find: ‘/root’: Permission denied
@@ -379,14 +381,16 @@ find: ‘/home/bandit31-git’: Permission denied
 bandit6@bandit:~$ find / -user bandit7 -group bandit6 -size 33c 2>/dev/null
 /var/lib/dpkg/info/bandit7.password
 ```
-Manejo de stderr stdout
+### stdin stdout stderr
+[Link documentacion](https://linuxize.com/post/bash-redirect-stderr-stdout/)
+0 - stdin, the standard input stream.  
+1 - stdout, the standard output stream.  
+2 - stderr, the standard error stream  
+
 ```bash
 # podemos tambien en script redirigir el error y nostrarlo
 root@pc:~# cat llskksk 2>&1
 cat: llskksk: No such file or directory
-
-# stderr: se referencia con un 2 = Controla lo errores
-# stdout
 
 # muestra el erro
 root@pc:~# cat adslkjads
@@ -404,7 +408,7 @@ Imdependizar procesos
 root@pc:~# disown -a
 ```
 
-No Hacer daña el sistema operativo
+Este comando dañaria el sistema operativo
 ```bash
 mv /* /dev/null
 ```
@@ -415,6 +419,7 @@ HKBPTKQnIay4Fw76bEy8PVxKEDQRKTzs
 ```
 
 ## bandit7
+The password for the next level is stored in the file data.txt next to the word millionth
 ```bash
 # el archivo es bastante grande
 bandit7@bandit:~$ cat data.txt
@@ -424,7 +429,10 @@ fathead	wBhCy0fqvbQdexz5kMKBtGoSWgXw7s0H
 attacks	3GzwnGiZnBDdVuHivJk1pEfOOYu7uOTa
 lopping	H9hzviFp1QO4WF8EzcQNl5MDz5r1bzUC
 tyrannosaurus	WxtYXVar4sgInHp7YUpTzOjdUw1Ww0x8
+```
 
+### wc awk time
+```bash
 # contar las lineas del archivos
 bandit7@bandit:~$ cat data.txt | wc -l
 98567
@@ -440,7 +448,7 @@ millionth	cvX2JJa4CFALtqS87jk27qwqGhBM9plV
 bandit7@bandit:~$ grep "millionth" data.txt
 millionth	cvX2JJa4CFALtqS87jk27qwqGhBM9plV
 
-#awk
+# awk
 bandit7@bandit:~$ cat data.txt | awk '/millionth/'
 millionth	cvX2JJa4CFALtqS87jk27qwqGhBM9plV
 
@@ -508,11 +516,14 @@ millionth	cvX2JJa4CFALtqS87jk27qwqGhBM9plV
 ```
 
 ## bandit8
+The password for the next level is stored in the file data.txt and is the only line of text that occurs only once
 ```bash
 # conteno de lineas
 bandit8@bandit:~$ cat data.txt | wc -l
 1001
-
+```
+### sort y uniq
+```bash
 # filtrar cadenas que poso aparecen una unica vez
 
 # enpezar por ordenar
@@ -540,6 +551,7 @@ UsvVyFSfZZWbi6wgC7dAFyFuR6jQQUhR
 ```
 
 ## bandit9
+The password for the next level is stored in the file data.txt in one of the few human-readable strings, preceded by several ‘=’ characters.
 ```bash
 bandit9@bandit:~$ cat data.txt
 �L�lω;��ßOܛ��ǤX��NdT$��x7��@D@�o��+D��B��M֢�Z/,_��w��#�5���
@@ -554,8 +566,11 @@ bandit9@bandit:~$ cat data.txt
             p
 
 # el archivo no es legible
-# sting nos permite listar las cadenas de caracteres imprimibles en ficheros
+```
 
+### sting
+sting nos permite listar las cadenas de caracteres imprimibles en ficheros
+```bash
 bandit9@bandit:~$ strings data.txt
 Z/,_
 WW"&8
@@ -566,7 +581,7 @@ x?Xn
 ;yzEt!
 WpU~e
 
-#
+
 bandit9@bandit:~$ strings data.txt | grep "====="
 ========== the*2i"4
 ========== password
@@ -578,7 +593,7 @@ bandit9@bandit:~$ strings data.txt | grep "=====" | tail -n 1
 &========== truKLdjsbJ5g7yyJ2X2R0o3a5HQJFuLk
 ```
 
-Ejercicio de bucle
+### Ejercicio de bucle
 ```bash
 root@pc:~# touch bucle.sh
 root@pc:~# chmod +x !$
@@ -644,9 +659,9 @@ bandit9@bandit:~$
 ```
 
 ## bandit10
+The password for the next level is stored in the file data.txt, which contains base64 encoded data
 ```bash
 # la passwor esta encriptada en base64
-
 bandit10@bandit:~$ cat data.txt
 VGhlIHBhc3N3b3JkIGlzIElGdWt3S0dzRlc4TU9xM0lSRnFyeEUxaHhUTkViVVBSCg==
 bandit10@bandit:~$
@@ -694,12 +709,11 @@ ooot:x:0:0:ooot:/ooot:/bin/bash
 root@pc:~# cat /etc/passwd | head -n 1 | tr 'root' 'jjvargass'
 jvva:x:0:0:jvva:/jvva:/bin/bash
 ```
+
+
 ## bandit11
+The password for the next level is stored in the file data.txt, where all lowercase (a-z) and uppercase (A-Z) letters have been rotated by 13 positions
 ```bash
-# The password for the next level is stored in the file data.txt,
-# where all lowercase (a-z) and uppercase (A-Z) letters have been rotated by 13 positions
-
-
 bandit11@bandit:~$ cat data.txt
 Gur cnffjbeq vf 5Gr8L4qetPEsPk8htqjhRK8XSP6x2RHh
 bandit11@bandit:~$ cat data.txt  | tr '[G-ZA-Fg-za-f]' '[T-ZA-St-za-s]'
@@ -2056,7 +2070,7 @@ more ~/text.txt
 exit 0
 ```
 
-
+```bash
 # para aprobecharnos del more, debemos reducir el tamaño de la terminal
 #  v  => entras en modo   luego
 # :e  => para editar el archivo que queremos ver
@@ -2066,7 +2080,7 @@ exit 0
 :e /etc/bandit_pass/bandit26
 
 5czgV9L3Xx8JPOyRbXh6lQbmIOWvPT6Z   
-
+```
 
 ## bandit26
 ```bash
