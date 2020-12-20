@@ -382,7 +382,7 @@ bandit6@bandit:~$ find / -user bandit7 -group bandit6 -size 33c 2>/dev/null
 /var/lib/dpkg/info/bandit7.password
 ```
 ### stdin stdout stderr
-[Link documentacion](https://linuxize.com/post/bash-redirect-stderr-stdout/)
+[Link documentacion](https://linuxize.com/post/bash-redirect-stderr-stdout/)  
 0 - stdin, the standard input stream.  
 1 - stdout, the standard output stream.  
 2 - stderr, the standard error stream  
@@ -413,6 +413,7 @@ Este comando dañaria el sistema operativo
 mv /* /dev/null
 ```
 
+Obtener la flag
 ```bash
 bandit6@bandit:~$ find / -user bandit7 -group bandit6 -size 33c 2>/dev/null | xargs cat
 HKBPTKQnIay4Fw76bEy8PVxKEDQRKTzs
