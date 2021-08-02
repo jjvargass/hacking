@@ -8,3 +8,4 @@ Este repositorio contendrá  distintos capítulos en el que se realizan diferent
 > ### 2. Scripting Machine
 - [lateralThink](./lateralThink/)  
 - [Blue](./blue/)  
+- [Shoker](./shoker/)  
